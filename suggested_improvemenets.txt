@@ -1,0 +1,7 @@
+- add a variable / class for the app bar (DRY)
+    - Make the app bar outside of the Navigator stack so that it doesn't change while "navigating"
+- Make some margins around for better display
+
+
+After we finish:
+- Making the app theme convenient with the idea

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
+import 'package:checkmate/screen/home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -156,6 +157,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       onPressed: () {
                         // ---------------> log in logic <------------------------
+                        // Directs to home page without validations (for now)
+                        /// What should we do:
+                        /// pass a function for validating input..
+                        /// Inside the function we check the validation of the input then if the user's data is found in the database
+                        /// Directs the user to his home page and passing in the parameters queried from the database
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const HomePage(title: "CheckMate"),
+                          ),
+                        );
                       },
                       child: Text(
                         "Log in",
@@ -180,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         minimumSize: const Size(double.infinity, 48),
                       ),
                       onPressed: () {
-                        // ---------------> log in logic <------------------------
+                        // ---------------> log in google logic <------------------------
                       },
                       child: Text(
                         "Log in using Google",
