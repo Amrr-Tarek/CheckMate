@@ -5,4 +5,3 @@
 
 After we finish:
 - Making the app theme convenient with the idea
-test
