@@ -9,21 +9,31 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors().boxColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+    return Container(
+      margin: const EdgeInsets.only(top: 10, bottom: 10),
+      decoration: const BoxDecoration(boxShadow: [
+        BoxShadow(
+            color: Color.fromRGBO(56, 56, 56, 0.5),
+            blurRadius: 20,
+            offset: Offset(0, 5),
+            spreadRadius: -5)
+      ]), // SHADOW IS NOT A ROUNDED RECTANGLE
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors().boxColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          minimumSize: const Size(double.infinity, 48), // Full width button
         ),
-        minimumSize: const Size(double.infinity, 48), // Full width button
-      ),
-      onPressed: onPress,
-      child: Text(
-        text, //
-        style: TextStyle(
-          color: AppColors().backgroundColor,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+        onPressed: onPress,
+        child: Text(
+          text, //
+          style: TextStyle(
+            color: AppColors().backgroundColor,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
