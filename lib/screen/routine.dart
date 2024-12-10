@@ -14,7 +14,7 @@ class _RoutineState extends State<Routine> {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
         appBar: AppBar(
-          backgroundColor: AppColors().boxColor,
+          backgroundColor: AppColors.boxColor,
           title: const Text("CheckMate",
               style: TextStyle(
                   color: Colors.white,

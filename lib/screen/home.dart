@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     // Is ran everytime setState is called
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: AppColors().boxColor,
+          backgroundColor: AppColors.boxColor,
           title: const Text("CheckMate",
               style: TextStyle(
                   color: Colors.white,
@@ -51,8 +51,9 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Button(
-                text: "Calendar",
-                onPress: () {
+                label: "Calendar",
+                backgroundColor: AppColors.boxColor,
+                onPressed: () {
                   // Push Calendar Page to the Navigator
                   Navigator.push(
                       context,
@@ -61,24 +62,27 @@ class _HomePageState extends State<HomePage> {
                 }),
             const SizedBox(height: 20),
             Button(
-                text: "Routine",
-                onPress: () {
+                label: "Routine",
+                backgroundColor: AppColors.boxColor,
+                onPressed: () {
                   // Push Routine Page to the Navigator
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => const Routine()));
                 }),
             const SizedBox(height: 20),
             Button(
-                text: "Goals",
-                onPress: () {
+                label: "Goals",
+                backgroundColor: AppColors.boxColor,
+                onPressed: () {
                   // Push Goals Page to the Navigator
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => const Goals()));
                 }),
             const SizedBox(height: 20),
             Button(
-                text: "My Profile",
-                onPress: () {
+                label: "My Profile",
+                backgroundColor: AppColors.boxColor,
+                onPressed: () {
                   // Push My Profile to the Navigator
                   Navigator.push(
                       context,
@@ -87,8 +91,9 @@ class _HomePageState extends State<HomePage> {
                 }),
             const SizedBox(height: 20), // I don't like the look of this neither
             Button(
-                text: "Settings",
-                onPress: () {
+                label: "Settings",
+                backgroundColor: AppColors.boxColor,
+                onPressed: () {
                   // Push Settings Page to the Navigator
                   Navigator.push(
                       context,

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
 import 'package:checkmate/screen/log_in.dart';
-
+import 'package:checkmate/const/buttons.dart';
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors().backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,7 +40,7 @@ class LoadingScreen extends StatelessWidget {
                   "Check Mate",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors().textColor,
+                    color: AppColors.textColor,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
@@ -50,11 +50,11 @@ class LoadingScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildDot(AppColors().textColor),
+                    buildDot(AppColors.textColor),
                     const SizedBox(width: 8),
-                    buildDot(AppColors().boxColor),
+                    buildDot(AppColors.boxColor),
                     const SizedBox(width: 8),
-                    buildDot(AppColors().boxColor),
+                    buildDot(AppColors.boxColor),
                   ],
                 ),
               ],
@@ -65,15 +65,8 @@ class LoadingScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors().boxColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      minimumSize:
-                          const Size(double.infinity, 48), // Full width button
-                    ),
+                  child: Button(
+                    label: "Start now",
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -81,14 +74,12 @@ class LoadingScreen extends StatelessWidget {
                             builder: (context) => const LoginScreen()),
                       );
                     },
-                    child: const Text(
-                      "Start now",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    backgroundColor: AppColors.boxColor,
+                    textColor: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    borderRadius: 16.0,
+                    height: 48.0,
                   ),
                 ),
                 const SizedBox(height: 16),

@@ -14,7 +14,7 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
         appBar: AppBar(
-          backgroundColor: AppColors().boxColor,
+          backgroundColor: AppColors.boxColor,
           title: const Text("CheckMate",
               style: TextStyle(
                   color: Colors.white,
@@ -23,7 +23,7 @@ class _SettingsState extends State<Settings> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back,
-              color: Colors.white,
+              color: AppColors.backgroundColor,
             ),
             onPressed: () {
               Navigator.pop(context);
