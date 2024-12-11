@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 16),
 
             // Title Section
-            Text(
+            const Text(
               "Check Mate",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         labelText: "Username",
-                        labelStyle: TextStyle(color: AppColors.textColor),
+                        labelStyle: const TextStyle(color: AppColors.textColor),
                         filled: true,
                         fillColor: AppColors.backgroundColor,
                         border: OutlineInputBorder(
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
-                        labelStyle: TextStyle(color: AppColors.textColor),
+                        labelStyle: const TextStyle(color: AppColors.textColor),
                         filled: true,
                         fillColor: AppColors.backgroundColor,
                         border: OutlineInputBorder(
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               });
                             },
                           ),
-                          Text(
+                          const Text(
                             "Remember me",
                             style: TextStyle(color: AppColors.smallText),
                           ),
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {
                           // ---------------> rember me logic <------------------------
                         },
-                        child: Text(
+                        child: const Text(
                           "Forgot Password?",
                           style: TextStyle(color: AppColors.hyperlink),
                         ),
@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Don't have an account? ",
                     style: TextStyle(
                       color: AppColors.smallText,
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: () {
                       // ---------------> sign up logic <------------------------
                     },
-                    child: Text(
+                    child: const Text(
                       "Sign up",
                       style: TextStyle(
                         color: AppColors.hyperlink,
