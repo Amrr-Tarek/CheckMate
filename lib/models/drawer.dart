@@ -32,7 +32,7 @@ class _MyDrawerState extends State<MyDrawer> {
               // Logo
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage('lib/assets/app_icon.jpg'),
+                image: AssetImage('assets/app_icon.jpg'),
               ),
             ),
           ),
@@ -166,7 +166,7 @@ Widget myDrawerList(BuildContext context, String? selected) {
                       padding: const EdgeInsets.all(1.5),
                       child: ClipOval(
                         child: Image.asset(
-                          'lib/assets/app_icon.jpg',
+                          'assets/app_icon.jpg',
                           width: 60,
                           height: 60,
                           fit: BoxFit.contain,
