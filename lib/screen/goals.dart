@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
+class Event{
+  final String title;
+  Event({required this.title});
+}
 
 class Goals extends StatefulWidget {
   const Goals({super.key});
