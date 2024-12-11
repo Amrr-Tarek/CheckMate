@@ -36,7 +36,7 @@ class LoadingScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
+                const Text(
                   "Check Mate",
                   textAlign: TextAlign.center,
                   style: TextStyle(
