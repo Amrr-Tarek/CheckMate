@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   // Push Routine Page to the Navigator
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Routine()));
+                      MaterialPageRoute(builder: (context) => const RoutinePage()));
                 }),
             const SizedBox(height: 20),
             Button(
