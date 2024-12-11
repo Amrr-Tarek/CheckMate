@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:checkmate/const/buttons.dart';
+import 'package:checkmate/models/buttons.dart';
+import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/screen/calendar.dart';
 import 'package:checkmate/screen/routine.dart';
 import 'package:checkmate/screen/goals.dart';
 import 'package:checkmate/screen/my_profile.dart';
 import 'package:checkmate/screen/settings.dart';
-import 'package:checkmate/screen/drawer.dart';
+import 'package:checkmate/models/drawer.dart';
 
 class HomePage extends StatefulWidget {
-  final String title;
 
-  const HomePage({super.key, required this.title});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,44 +23,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // Is ran everytime setState is called
     return Scaffold(
-      appBar: appBar(),
-      drawer: Drawer(
-        child: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                MyDrawer(),
-                myDrawerList(),
-              ],
-            ),
-          ),
-        ),
-      ),
+      appBar: appBar("Dashboard"),
+      drawer: createDrawer(context, "dashboard"),
       body: __body(),
     );
   }
 
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: const Color(0xFFB9A3F4),
-      title: const Text("Dashboard",
-          style: TextStyle(
-              color: Color(0xFF1D1B20),
-              fontSize: 22,
-              fontWeight: FontWeight.bold) // Change to Cairo
-          ),
-      centerTitle: true,
-      // leading: IconButton(
-      //   icon: const Icon(
-      //     Icons.menu,
-      //     color: Color(0xFF1D1B20),
-      //   ),
-      //   onPressed: () {
-      //     // Display Drawer
-      //   },
-      // ),
-    ); // Remember to add a suffix for the profile
-  }
 
   Container __body() {
     return Container(

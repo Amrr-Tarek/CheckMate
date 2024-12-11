@@ -11,8 +11,13 @@
 - [ ] Create a folder called 'fonts' (outside the 'lib' folder):
 	- contain the font family used by the app
 	- add it to the dependencies (pubspec.yaml)
+- [ ] Create a font style dart file to manage common text styles
 
-  
+- [ ] Stop using static colors and use AppColors() instead :>
+
+- [ ] Improve the logic of the Navigation Stack
+
+
 
 After we finish:
 
