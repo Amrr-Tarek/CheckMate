@@ -1,25 +1,24 @@
 import 'package:checkmate/models/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/models/app_bar.dart';
 
-class Routine extends StatefulWidget {
-  const Routine({super.key});
+class Goals extends StatefulWidget {
+  const Goals({super.key});
 
   @override
-  State<Routine> createState() => _RoutineState();
+  State<Goals> createState() => _GoalsState();
 }
 
-class _RoutineState extends State<Routine> {
+class _GoalsState extends State<Goals> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: appBar("Routine"),
-        drawer: createDrawer(context, "routine"),
+        appBar: appBar("Goals"),
+        drawer: createDrawer(context, "goals"),
         body: const Center(
             child: Text(
-          "Routine",
+          "Goals",
           style: TextStyle(fontSize: 26),
         )));
   }

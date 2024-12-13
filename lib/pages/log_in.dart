@@ -1,6 +1,6 @@
+import 'package:checkmate/models/navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
-import 'package:checkmate/screen/home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -162,13 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         /// pass a function for validating input..
                         /// Inside the function we check the validation of the input then if the user's data is found in the database
                         /// Directs the user to his home page and passing in the parameters queried from the database
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const HomePage(),
-                          ),
-                        );
+                        navigate(context, '/home');
                       },
                       child: Text(
                         "Log in",

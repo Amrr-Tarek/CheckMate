@@ -1,7 +1,7 @@
+import 'package:checkmate/models/navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
-import 'package:checkmate/screen/log_in.dart';
 
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
@@ -75,11 +75,7 @@ class LoadingScreen extends StatelessWidget {
                           const Size(double.infinity, 48), // Full width button
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
+                      navigate(context, '/login');
                     },
                     child: const Text(
                       "Start now",

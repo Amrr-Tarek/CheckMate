@@ -1,11 +1,5 @@
-import 'package:checkmate/const/colors.dart';
-import 'package:checkmate/screen/home.dart';
+import 'package:checkmate/models/navigator.dart';
 import 'package:flutter/material.dart';
-import 'package:checkmate/screen/calendar.dart';
-import 'package:checkmate/screen/routine.dart';
-import 'package:checkmate/screen/goals.dart';
-import 'package:checkmate/screen/my_profile.dart';
-import 'package:checkmate/screen/settings.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -32,7 +26,7 @@ class _MyDrawerState extends State<MyDrawer> {
               // Logo
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage('assets/app_icon.jpg'),
+                image: AssetImage('assets/app_icon.png'),
               ),
             ),
           ),
@@ -47,9 +41,8 @@ class DrawerMenuButtons extends StatelessWidget {
   /// A class that handles the initialization of each button in the drawer
   final String title;
   final IconData icon;
-  final StatefulWidget page; // The page to be navigated to upon press
+  final String page; // The page to be navigated to upon press
   final bool selected; // If there should be a visual aid for selection
-  final bool clear; // If we should override the target page instead of pushing
 
   const DrawerMenuButtons({
     super.key,
@@ -57,7 +50,6 @@ class DrawerMenuButtons extends StatelessWidget {
     required this.icon,
     required this.page,
     this.selected = false,
-    this.clear = false,
   });
 
   @override
@@ -74,14 +66,7 @@ class DrawerMenuButtons extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
           onTap: () {
-            if (selected) return;
-            if (clear) {
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => page));
-            } else {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => page));
-            }
+            navigate(context, page);
           },
           child: Padding(
             padding: const EdgeInsets.only(top: 15, bottom: 15),
@@ -105,12 +90,6 @@ class DrawerMenuButtons extends StatelessWidget {
 }
 
 Widget myDrawerList(BuildContext context, String? selected) {
-  /// Responsible for building the drawer's elements
-  /// Maintains the following Navigator stack strcuture
-  /// HomePage -> sub-page -> settings / my profile
-  
-
-
   return Container(
     padding: const EdgeInsets.only(top: 10, bottom: 10),
     child: Column(
@@ -118,38 +97,37 @@ Widget myDrawerList(BuildContext context, String? selected) {
         DrawerMenuButtons(
           title: "Dashboard",
           icon: Icons.dashboard,
-          page: const HomePage(),
+          page: '/home',
           selected: selected == "dashboard",
         ),
         DrawerMenuButtons(
           title: "Calendar",
           icon: Icons.calendar_month,
-          page: const Calendar(),
+          page: '/calendar',
           selected: selected == "calendar",
         ),
         DrawerMenuButtons(
           title: "Routine",
           icon: Icons.repeat,
-          page: const Routine(),
+          page: '/routine',
           selected: selected == "routine",
         ),
         DrawerMenuButtons(
           title: "Goals",
           icon: Icons.album_outlined,
-          page: const Goals(),
+          page: '/goals',
           selected: selected == "goals",
         ),
         DrawerMenuButtons(
           title: "Settings",
           icon: Icons.settings,
-          page: const Settings(),
+          page: '/settings',
           selected: selected == "settings",
         ),
         const Divider(),
         InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MyProfile()));
+              navigate(context, '/myprofile');
             },
             child: Container(
               margin: const EdgeInsets.only(right: 20, left: 20, top: 5),
@@ -166,7 +144,7 @@ Widget myDrawerList(BuildContext context, String? selected) {
                       padding: const EdgeInsets.all(1.5),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/app_icon.jpg',
+                          'assets/app_icon.png',
                           width: 60,
                           height: 60,
                           fit: BoxFit.contain,

@@ -1,6 +1,11 @@
 # Commit Changelog
 - Added:
+    - Navigator function 'navigator.dart' to take care of navigation across the application
 - Fixed:
+    - Enhanced Navigator Logic
+        - Replaced the navigation commands with the navigate function
+    - Some redundancy improvements
 - Updated:
-    - Updated app name and icon (for some reason it is black)
-    - 'assets' folder moved outside the 'lib' folder
+    - app_icon converted from JPG to PNG
+    - Gave a Route name to each page
+    - Renamed 'pages' folder to 'screens

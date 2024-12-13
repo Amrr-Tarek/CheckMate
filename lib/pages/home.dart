@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/models/app_bar.dart';
-import 'package:checkmate/screen/calendar.dart';
-import 'package:checkmate/screen/routine.dart';
-import 'package:checkmate/screen/goals.dart';
-import 'package:checkmate/screen/my_profile.dart';
-import 'package:checkmate/screen/settings.dart';
+import 'package:checkmate/models/navigator.dart';
 import 'package:checkmate/models/drawer.dart';
 
 class HomePage extends StatefulWidget {
+  final String title = "Home";
 
   const HomePage({super.key});
 
@@ -29,7 +26,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   Container __body() {
     return Container(
       margin: const EdgeInsets.all(10),
@@ -46,37 +42,27 @@ class _HomePageState extends State<HomePage> {
           Button(
               text: "Calendar",
               onPress: () {
-                // Push Calendar Page to the Navigator
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Calendar()));
+                navigate(context, '/calendar');
               }),
           Button(
               text: "Routine",
               onPress: () {
-                // Push Routine Page to the Navigator
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Routine()));
+                navigate(context, '/routine');
               }),
           Button(
               text: "Goals",
               onPress: () {
-                // Push Goals Page to the Navigator
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Goals()));
+                navigate(context, '/goals');
               }),
           Button(
               text: "My Profile",
               onPress: () {
-                // Push My Profile to the Navigator
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const MyProfile()));
+                navigate(context, '/myprofile');
               }),
           Button(
               text: "Settings",
               onPress: () {
-                // Push Settings Page to the Navigator
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Settings()));
+                navigate(context, "/settings");
               }),
         ],
       )),
