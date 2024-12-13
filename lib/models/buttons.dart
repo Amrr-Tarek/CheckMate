@@ -17,10 +17,10 @@ class Button extends StatelessWidget {
             blurRadius: 20,
             offset: Offset(0, 5),
             spreadRadius: -5)
-      ]), // SHADOW IS NOT A ROUNDED RECTANGLE
+      ]),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors().boxColor,
+          backgroundColor: AppColors.boxColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -30,7 +30,7 @@ class Button extends StatelessWidget {
         child: Text(
           text, //
           style: TextStyle(
-            color: AppColors().backgroundColor,
+            color: AppColors.backgroundColor,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

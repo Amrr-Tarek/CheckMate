@@ -9,7 +9,7 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors().backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,7 +40,7 @@ class LoadingScreen extends StatelessWidget {
                   "Check Mate",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors().textColor,
+                    color: AppColors.textColor,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
@@ -50,11 +50,11 @@ class LoadingScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildDot(AppColors().textColor),
+                    buildDot(AppColors.textColor),
                     const SizedBox(width: 8),
-                    buildDot(AppColors().boxColor),
+                    buildDot(AppColors.boxColor),
                     const SizedBox(width: 8),
-                    buildDot(AppColors().boxColor),
+                    buildDot(AppColors.boxColor),
                   ],
                 ),
               ],
@@ -67,7 +67,7 @@ class LoadingScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors().boxColor,
+                      backgroundColor: AppColors.boxColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

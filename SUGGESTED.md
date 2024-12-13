@@ -9,21 +9,24 @@
 
 - [x] Improve the logic of the Navigation Stack
 
-- [ ] Create a folder called 'fonts' (outside the 'lib' folder):
+- [x] Create a folder called 'fonts' (outside the 'lib' folder):
 	- contain the font family used by the app
 	- add it to the dependencies (pubspec.yaml)
 
-- [ ] Create a font style dart file to manage common text styles
-
 - [ ] Stop using static colors and use AppColors() instead :>
-
 
 - [ ] Implement a Loading Screen (a bouncing logo or something)
 
 - [ ] After login.. Empty the stack and push the home page
 
+- [ ] Fix when you are at the root of the application, pressing the back button would pop the root and close the app.
 
+- [ ] Add a bottom nav-bar
+
+- [ ] Add hints to each button
 
 After we finish:
 
 - [ ] Making the app theme convenient with the idea
+
+- [ ] Add dark mode

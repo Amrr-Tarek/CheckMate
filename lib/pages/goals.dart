@@ -14,8 +14,8 @@ class _GoalsState extends State<Goals> {
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: appBar("Goals"),
-        drawer: createDrawer(context, "goals"),
+        appBar: appBar(context, "Goals"),
+        drawer: MyDrawer.createDrawer(context, "goals"),
         body: const Center(
             child: Text(
           "Goals",

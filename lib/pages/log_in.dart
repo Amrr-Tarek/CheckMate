@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors().backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "Check Mate",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors().textColor,
+                color: AppColors.textColor,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 height: 1.2,
@@ -57,11 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                buildDot(AppColors().boxColor),
+                buildDot(AppColors.boxColor),
                 const SizedBox(width: 8),
-                buildDot(AppColors().textColor),
+                buildDot(AppColors.textColor),
                 const SizedBox(width: 8),
-                buildDot(AppColors().boxColor),
+                buildDot(AppColors.boxColor),
               ],
             ),
             const SizedBox(height: 16),
@@ -77,16 +77,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         labelText: "Username",
-                        labelStyle: TextStyle(color: AppColors().textColor),
+                        labelStyle: TextStyle(color: AppColors.textColor),
                         filled: true,
-                        fillColor: AppColors().backgroundColor,
+                        fillColor: AppColors.backgroundColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
                           borderSide: BorderSide.none,
                         ),
                         hintText: "Enter your username",
                         hintStyle: TextStyle(
-                            color: AppColors().textColor.withOpacity(0.5)),
+                            color: AppColors.textColor.withOpacity(0.5)),
                       ),
                     ),
                   ),
@@ -98,16 +98,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
-                        labelStyle: TextStyle(color: AppColors().textColor),
+                        labelStyle: TextStyle(color: AppColors.textColor),
                         filled: true,
-                        fillColor: AppColors().backgroundColor,
+                        fillColor: AppColors.backgroundColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
                           borderSide: BorderSide.none,
                         ),
                         hintText: "Enter your password",
                         hintStyle: TextStyle(
-                            color: AppColors().textColor.withOpacity(0.5)),
+                            color: AppColors.textColor.withOpacity(0.5)),
                       ),
                     ),
                   ),
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           Text(
                             "Remember me",
-                            style: TextStyle(color: AppColors().smallText),
+                            style: TextStyle(color: AppColors.smallText),
                           ),
                         ],
                       ),
@@ -138,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           "Forgot Password?",
-                          style: TextStyle(color: AppColors().hyperlink),
+                          style: TextStyle(color: AppColors.hyperlink),
                         ),
                       ),
                     ],
@@ -149,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors().boxColor,
+                        backgroundColor: AppColors.boxColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24.0),
                         ),
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         "Log in",
                         style: TextStyle(
-                          color: AppColors().backgroundColor,
+                          color: AppColors.backgroundColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -180,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors().backgroundColor,
+                        backgroundColor: AppColors.backgroundColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24.0),
                         ),
@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         "Log in using Google",
                         style: TextStyle(
-                          color: AppColors().boxColor,
+                          color: AppColors.boxColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     "Don't have an account? ",
                     style: TextStyle(
-                      color: AppColors().smallText,
+                      color: AppColors.smallText,
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
                     ),
@@ -225,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       "Sign up",
                       style: TextStyle(
-                        color: AppColors().hyperlink,
+                        color: AppColors.hyperlink,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),

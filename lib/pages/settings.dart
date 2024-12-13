@@ -13,7 +13,7 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: appBar("Settings"),
+        appBar: appBar(context, "Settings"),
         body: const Center(
             child: Text(
           "Settings",

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// A handling for the navigator logic to prevent too many pages in the stack
+
 void navigate(BuildContext context, String next) {
   final String? currentRouteName = ModalRoute.of(context)?.settings.name;
 

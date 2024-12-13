@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/myprofile': (context) => const MyProfile(),
         '/settings': (context) => const Settings(),
       },
+      theme: ThemeData(fontFamily: "Cairo"),
     );
   }
 }

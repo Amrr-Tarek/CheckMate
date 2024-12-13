@@ -13,7 +13,7 @@ class _MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: appBar("Profile"),
+        appBar: appBar(context, "Profile"),
         body: const Center(
             child: Text(
           "My Profile",

@@ -6,6 +6,20 @@ class MyDrawer extends StatefulWidget {
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
+
+  static Drawer createDrawer(BuildContext context, String selected) {
+  return Drawer(
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+          const MyDrawer(),
+          myDrawerList(context, selected),
+        ],
+      ),
+    ),
+  );
+}
+
 }
 
 class _MyDrawerState extends State<MyDrawer> {
@@ -30,7 +44,8 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
             ),
           ),
-          const Text("Your Name!"),
+          const Text("Your Name!",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -75,11 +90,19 @@ class DrawerMenuButtons extends StatelessWidget {
                 Expanded(
                   child: Icon(
                     icon,
-                    size: 20,
+                    size: 22,
                     color: Colors.black,
                   ),
                 ),
-                Expanded(flex: 3, child: Text(title)), // Add text style
+                Expanded(
+                    flex: 3,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )), // Add text style
               ],
             ),
           ),
@@ -91,7 +114,7 @@ class DrawerMenuButtons extends StatelessWidget {
 
 Widget myDrawerList(BuildContext context, String? selected) {
   return Container(
-    padding: const EdgeInsets.only(top: 10, bottom: 10),
+    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
     child: Column(
       children: [
         DrawerMenuButtons(
@@ -134,8 +157,13 @@ Widget myDrawerList(BuildContext context, String? selected) {
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Expanded(child: Text("Your Name")),
+                  const Expanded(
+                      child: Text(
+                    "Your Name",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  )),
                   Container(
+                      // Outline
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -154,19 +182,6 @@ Widget myDrawerList(BuildContext context, String? selected) {
               ),
             )),
       ],
-    ),
-  );
-}
-
-Drawer createDrawer(BuildContext context, String selected) {
-  return Drawer(
-    child: SingleChildScrollView(
-      child: Column(
-        children: [
-          const MyDrawer(),
-          myDrawerList(context, selected),
-        ],
-      ),
     ),
   );
 }

@@ -14,8 +14,8 @@ class _RoutineState extends State<Routine> {
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: appBar("Routine"),
-        drawer: createDrawer(context, "routine"),
+        appBar: appBar(context, "Routine"),
+        drawer: MyDrawer.createDrawer(context, "routine"),
         body: const Center(
             child: Text(
           "Routine",
