@@ -13,6 +13,8 @@
 	- contain the font family used by the app
 	- add it to the dependencies (pubspec.yaml)
 
+- [x] Add a bottom nav-bar (Non-functional btw)
+
 - [ ] Stop using static colors and use AppColors() instead :>
 
 - [ ] Implement a Loading Screen (a bouncing logo or something)
@@ -20,8 +22,6 @@
 - [ ] After login.. Empty the stack and push the home page
 
 - [ ] Fix when you are at the root of the application, pressing the back button would pop the root and close the app.
-
-- [ ] Add a bottom nav-bar
 
 - [ ] Add hints to each button
 
