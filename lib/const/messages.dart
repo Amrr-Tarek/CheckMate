@@ -9,4 +9,7 @@ class Messages {
   static const String activityInputError = "please enter both description and interval correctly";
   static const String saveButtonText = "Save";
   static const String editActivity = "Edit";
+  static String exceedWordLimit(wordLimit) {
+    return "Please limit Your description to $wordLimit words.";
+    }
 }
