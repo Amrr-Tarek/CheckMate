@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
-import 'package:checkmate/const/buttons.dart';
+import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/const/messages.dart';
 import 'package:checkmate/controllers/activityController.dart';
 import 'dart:async';

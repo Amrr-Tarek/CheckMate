@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:checkmate/const/buttons.dart';
+import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/pages/calendar.dart';
 import 'package:checkmate/pages/routine.dart';
 import 'package:checkmate/pages/goals.dart';

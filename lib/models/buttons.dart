@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 
 class Button extends StatelessWidget {
-
   final String label;
   final VoidCallback onPressed;
   final Color backgroundColor;
@@ -28,9 +27,10 @@ class Button extends StatelessWidget {
     this.height = 48.0,
   });
   @override
-Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: verticalPadding, horizontal: horizontalPadding),
+      padding: EdgeInsets.symmetric(
+          vertical: verticalPadding, horizontal: horizontalPadding),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
@@ -83,12 +83,14 @@ class CheckBoxWidget extends StatefulWidget {
   /// The text label to display next to the check box.
   final Text text;
 
-  const CheckBoxWidget({
-    Key? key,
-    required this.isChecked,
-    required this.onChanged,
-    this.text =const Text("") // Default value is an empty string if no text is provided
-  }) : super(key: key);
+  const CheckBoxWidget(
+      {Key? key,
+      required this.isChecked,
+      required this.onChanged,
+      this.text = const Text(
+          "") // Default value is an empty string if no text is provided
+      })
+      : super(key: key);
 
   @override
   _CheckBoxWidgetState createState() => _CheckBoxWidgetState();

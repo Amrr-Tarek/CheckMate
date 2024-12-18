@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
 import 'package:checkmate/pages/log_in.dart';
-import 'package:checkmate/const/buttons.dart';
+import 'package:checkmate/models/buttons.dart';
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
