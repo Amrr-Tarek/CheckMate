@@ -1,6 +1,8 @@
+import 'package:checkmate/models/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:checkmate/const/colors.dart';
-class Event{
+import 'package:checkmate/models/app_bar.dart';
+
+class Event {
   final String title;
   Event({required this.title});
 }
@@ -17,23 +19,8 @@ class _GoalsState extends State<Goals> {
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: AppBar(
-          backgroundColor: AppColors.boxColor,
-          title: const Text("CheckMate",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        appBar: appBar(context, "Goals"),
+        drawer: MyDrawer.createDrawer(context, "goals"),
         body: const Center(
             child: Text(
           "Goals",

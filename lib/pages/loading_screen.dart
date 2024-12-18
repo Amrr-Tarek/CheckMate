@@ -1,8 +1,10 @@
+import 'package:checkmate/models/navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
-import 'package:checkmate/pages/log_in.dart';
 import 'package:checkmate/models/buttons.dart';
+
+
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
@@ -68,11 +70,7 @@ class LoadingScreen extends StatelessWidget {
                   child: Button(
                     label: "Start now",
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
+                      navigate(context, '/login');
                     },
                     backgroundColor: AppColors.boxColor,
                     textColor: Colors.black,

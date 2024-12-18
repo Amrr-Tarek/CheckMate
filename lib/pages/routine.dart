@@ -1,3 +1,5 @@
+import 'package:checkmate/models/app_bar.dart';
+import 'package:checkmate/models/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/models/buttons.dart';
@@ -16,17 +18,16 @@ class _RoutinePageState extends State<RoutinePage> {
   List<Map<String, dynamic>> activities =
       []; // List to store activities and their checked states
 
-
-
   @override
   Widget build(BuildContext context) {
-  Activitycontroller  activityController = Activitycontroller();
-  Timer.periodic(
-    const Duration(days: 1), 
-    (Timer t) {
-      int unCheckedAfterDay = activityController.unCheckAllActivities(setState, activities); // Capture the return value
-    },
-  );
+    Activitycontroller activityController = Activitycontroller();
+    Timer.periodic(
+      const Duration(days: 1),
+      (Timer t) {
+        int unCheckedAfterDay = activityController.unCheckAllActivities(
+            setState, activities); // Capture the return value
+      },
+    );
 
     // Separate activities into checked and unchecked
     List<Map<String, dynamic>> checkedActivities =
@@ -35,10 +36,8 @@ class _RoutinePageState extends State<RoutinePage> {
         activities.where((activity) => !activity['isChecked']).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.backgroundColor,
-        title: const Text("Routine page"),
-      ),
+      appBar: appBar(context, "Routine"),
+      drawer: MyDrawer.createDrawer(context, "routine"),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -182,7 +181,9 @@ class _RoutinePageState extends State<RoutinePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){  activityController.addRoutine(activities, context);},
+        onPressed: () {
+          activityController.addRoutine(activities, context);
+        },
         backgroundColor: AppColors.boxColor,
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -206,7 +207,8 @@ class _RoutinePageState extends State<RoutinePage> {
                 title: const Text('Edit'),
                 onTap: () {
                   Navigator.pop(context);
-                  activityController.editActivity(context, index, activityList, setState);
+                  activityController.editActivity(
+                      context, index, activityList, setState);
                 },
               ),
               ListTile(
@@ -214,7 +216,8 @@ class _RoutinePageState extends State<RoutinePage> {
                 title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
-                  activityController.removeActivity(index, setState, activities);
+                  activityController.removeActivity(
+                      index, setState, activities);
                 },
               ),
             ],

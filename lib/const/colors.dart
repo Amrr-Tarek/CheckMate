@@ -6,4 +6,5 @@ class AppColors {
   static const Color textColor = Color(0xFF111417);
   static const Color smallText = Color(0xFF647487);
   static const Color hyperlink = Color(0xFF3889E5);
+  static const Color barColor = Color(0xFFB9A3F4);
 }

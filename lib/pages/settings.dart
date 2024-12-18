@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
+import 'package:checkmate/models/app_bar.dart';
+
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -13,23 +15,7 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
         // Page Front End - Everything down here is unnecessary
-        appBar: AppBar(
-          backgroundColor: AppColors.boxColor,
-          title: const Text("CheckMate",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: AppColors.backgroundColor,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        appBar: appBar(context, "Settings"),
         body: const Center(
             child: Text(
           "Settings",

@@ -1,6 +1,8 @@
+import 'package:checkmate/models/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/pages/goals.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:checkmate/models/app_bar.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -21,18 +23,8 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Calendar",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        centerTitle: true,
-      ),
+      appBar: appBar(context, "Calendar"),
+      drawer: MyDrawer.createDrawer(context, "calendar"),
       body: content(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
