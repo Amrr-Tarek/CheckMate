@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/buttons.dart';
-import 'package:checkmate/screen/calendar.dart';
-import 'package:checkmate/screen/routine.dart';
-import 'package:checkmate/screen/goals.dart';
-import 'package:checkmate/screen/my_profile.dart';
-import 'package:checkmate/screen/settings.dart';
+import 'package:checkmate/pages/calendar.dart';
+import 'package:checkmate/pages/routine.dart';
+import 'package:checkmate/pages/goals.dart';
+import 'package:checkmate/pages/my_profile.dart';
+import 'package:checkmate/pages/settings.dart';
 import 'package:checkmate/const/colors.dart';
 
 class HomePage extends StatefulWidget {

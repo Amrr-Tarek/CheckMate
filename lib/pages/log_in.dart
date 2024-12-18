@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
-import 'package:checkmate/screen/home.dart';
+import 'package:checkmate/pages/home.dart';
 import 'package:checkmate/const/buttons.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

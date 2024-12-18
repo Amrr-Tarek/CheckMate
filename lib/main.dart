@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:checkmate/screen/loading_screen.dart';
+import 'package:checkmate/pages/loading_screen.dart';
 
 void main() {
   runApp(const MyApp());
