@@ -70,7 +70,7 @@ class LoadingScreen extends StatelessWidget {
                   child: Button(
                     label: "Start now",
                     onPressed: () {
-                      navigate(context, '/login');
+                      navigate(context, '/SignUpPage');
                     },
                     backgroundColor: AppColors.boxColor,
                     textColor: Colors.black,
