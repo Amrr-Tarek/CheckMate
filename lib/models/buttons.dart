@@ -84,13 +84,12 @@ class CheckBoxWidget extends StatefulWidget {
   final Text text;
 
   const CheckBoxWidget(
-      {Key? key,
+      {super.key,
       required this.isChecked,
       required this.onChanged,
       this.text = const Text(
           "") // Default value is an empty string if no text is provided
-      })
-      : super(key: key);
+      });
 
   @override
   _CheckBoxWidgetState createState() => _CheckBoxWidgetState();
