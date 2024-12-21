@@ -18,7 +18,7 @@ class _CalendarState extends State<Calendar> {
 
   // To store the goals and their dates
   Map<DateTime, List<Event>> goals = {};
-  TextEditingController _eventController = TextEditingController();
+  final TextEditingController _eventController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +55,13 @@ class _CalendarState extends State<Calendar> {
                           if(_eventController.text.isNotEmpty)
                           {
                             // here we create a new event object
-                            Event new_event = Event(title: _eventController.text);
+                            Event newEvent = Event(title: _eventController.text);
                             if (goals.containsKey(_selectedDay))
                           {
-                            goals[_selectedDay]!.add(new_event);
+                            goals[_selectedDay]!.add(newEvent);
                           } else
                           {
-                            goals[_selectedDay] = [new_event];
+                            goals[_selectedDay] = [newEvent];
                           }
                           // clear the eventcontroller content for the coming events
                           _eventController.clear();

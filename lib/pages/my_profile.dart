@@ -21,7 +21,7 @@ class _MyProfileState extends State<MyProfile> {
             __nameLogo(),
             const SizedBox(height: 10),
             const Divider(),
-            __email(),
+            __emailSection(),
             const Divider(),
             __insightsSection(),
           ],
@@ -60,7 +60,7 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Padding __email() {
+  Padding __emailSection() {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
       child: Column(
@@ -137,7 +137,7 @@ class _InsightCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5), //
+        margin: const EdgeInsets.symmetric(horizontal: 5),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
