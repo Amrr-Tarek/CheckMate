@@ -12,4 +12,9 @@ class Messages {
   static String exceedWordLimit(wordLimit) {
     return "Please limit Your description to $wordLimit words.";
     }
+  static const String tittle_And_Deadline_Required="title and deadline are required.";
+  static String exceedCharLimit(charLimit) {
+    return  "title must be less than $charLimit characters long.";
+    }
+  static const String invalid_deadline = "Invalid deadline format.";
 }
