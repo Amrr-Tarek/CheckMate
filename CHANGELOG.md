@@ -1,17 +1,6 @@
-Implemented My Profile Page
-
+Minor Body Update
 # Commit Changelog
 - Added:
-    - User's info
-        - Name
-        - XP (experience)
-        - Logo
-        - Email Address
-    - User's Insights / Stats
-        - Pending Tasks
-        - Overdue Tasks
-
-        - Current Streak
-        - Longest Streak
 - Fixed:
 - Updated:
+    - Wrapped 'myprofile, home' body in a SingleChildScrollView widget
