@@ -1,6 +1,6 @@
 Settings Page
 # Commit Changelog
-Added:
+- Added:
     - Added one more suggestion
     - Settings Page with the following sections (UI only, functionality not yet implemented):
         - General Settings:
