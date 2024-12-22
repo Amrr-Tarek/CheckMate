@@ -8,7 +8,6 @@ import 'package:checkmate/pages/routine.dart';
 import 'package:checkmate/pages/goals.dart';
 import 'package:checkmate/pages/my_profile.dart';
 import 'package:checkmate/pages/settings.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(const MyApp());
