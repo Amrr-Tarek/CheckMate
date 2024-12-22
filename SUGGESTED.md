@@ -19,6 +19,8 @@
 
 - [ ] Implement a Loading Screen (a bouncing logo or something)
 
+- [ ] Handling account sessions efficiently to prevent the user from logging in each time, such that if the user already logged in.. redirect to the dashboard.. not the welcome screen
+
 - [ ] After login.. Empty the stack and push the home page
 
 - [ ] Fix when you are at the root of the application, pressing the back button would pop the root and close the app.

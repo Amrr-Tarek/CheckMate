@@ -32,14 +32,15 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),
       drawer: MyDrawer.createDrawer(context, "dashboard"),
-      body: ListView(
-        children: [
-          _nameXP(),
-          _graph(),
-          SizedBox(height: 10),
-          _tasks(),
-          SizedBox(height: 40),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _nameXP(),
+            _graph(),
+            SizedBox(height: 10),
+            _tasks(),
+          ],
+        ),
       ),
       bottomNavigationBar: myBottomNavBar(), // Non-functional
     );
