@@ -102,7 +102,7 @@ class _RoutinePageState extends State<RoutinePage> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                Messages.finishActivities,
+                Messages.finish,
                 style: TextStyle(
                   fontSize: 32,
                   color: AppColors.textColor,
