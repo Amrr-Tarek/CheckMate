@@ -1,5 +1,6 @@
 class Messages {
-  static const String finishActivities = "Checkmate! No activities left to complete. ";
+  static const String finish = "Checkmate!";
+  static const String motivationToAddGoals = "Your next move starts here\nadd goals and checkmate them!";
   static const String motivationToAddActivities = "Your next move starts here\nadd an activity and checkmate your goals!";
   static const String addActivity = "Add New activity";
   static const String enterActivityDescription = "Enter activity description";
@@ -17,4 +18,5 @@ class Messages {
     return  "title must be less than $charLimit characters long.";
     }
   static const String invalid_deadline = "Invalid deadline format.";
+  static const String subtask_deadline_before_goal_deadline= "Subtask's deadline must be before goal's deadline ";
 }
