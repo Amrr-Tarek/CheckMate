@@ -20,12 +20,14 @@ class _RoutinePageState extends State<RoutinePage> {
 
   @override
   Widget build(BuildContext context) {
-    Activitycontroller activityController = Activitycontroller();
+    ActivityController activityController = ActivityController();
     Timer.periodic(
       const Duration(days: 1),
       (Timer t) {
-        int unCheckedAfterDay = activityController.unCheckAllActivities(
-            setState, activities); // Capture the return value
+        List<Map<String, dynamic>> updatedActivities = activityController.uncheckAllActivities(activities);
+        setState(() {
+          activities = updatedActivities;
+        });
       },
     );
 
@@ -181,8 +183,11 @@ class _RoutinePageState extends State<RoutinePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          activityController.addRoutine(activities, context);
+        onPressed: () async {
+          List<Map<String, dynamic>> updatedActivities = await activityController.addRoutine(activities, context);
+          setState(() {
+            activities = updatedActivities;
+          });
         },
         backgroundColor: AppColors.boxColor,
         child: const Icon(Icons.add, color: Colors.white),
@@ -193,7 +198,7 @@ class _RoutinePageState extends State<RoutinePage> {
 // Function to show "Edit" and "Delete" options
   void _showTaskOptions(BuildContext context, int index,
       List<Map<String, dynamic>> activityList) {
-    Activitycontroller activityController = Activitycontroller();
+    ActivityController activityController = ActivityController();
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -205,10 +210,13 @@ class _RoutinePageState extends State<RoutinePage> {
               ListTile(
                 leading: const Icon(Icons.edit),
                 title: const Text('Edit'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  activityController.editActivity(
-                      context, index, activityList, setState);
+                  List<Map<String, dynamic>> updatedActivities = await activityController.editActivity(
+                      context, index, activityList);
+                  setState(() {
+                    activities = updatedActivities;
+                  });
                 },
               ),
               ListTile(
@@ -216,14 +224,17 @@ class _RoutinePageState extends State<RoutinePage> {
                 title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
-                  activityController.removeActivity(
-                      index, setState, activities);
+                  List<Map<String, dynamic>> updatedActivities = activityController.removeActivity(
+                      index, activities);
+                  setState(() {
+                    activities = updatedActivities;
+                  });
                 },
               ),
             ],
           ),
         );
       },
-    );
+    );  
   }
 }

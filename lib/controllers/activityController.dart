@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/messages.dart';
 
-class Activitycontroller {
+class ActivityController {
   // Word limit constant
   static const int wordLimit = 10; // Define the word limit
 
   // Function to check word limit and display the message
-  void checkWordLimit(String text, Function setState, Function(String?) updateMessage) {
+  void checkWordLimit(String text, Function(String?) updateMessage) {
     int wordCount = text.trim().split(RegExp(r'\s+')).length;
     if (wordCount > wordLimit) {
       updateMessage(Messages.exceedWordLimit(wordLimit)); // Show error if word count exceeds the limit
@@ -16,18 +16,17 @@ class Activitycontroller {
   }
 
   // Function to add a routine (activity)
-  void addRoutine(List<Map<String, dynamic>> activities, context) {
-    showDialog(
+  Future<List<Map<String, dynamic>>> addRoutine(List<Map<String, dynamic>> activities, BuildContext context) async {
+    final TextEditingController activityTextController = TextEditingController();
+    final TextEditingController activityIntervalController = TextEditingController();
+    String? errorMessage;
+    String? wordLimitMessage;
+
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
-        final TextEditingController activityTextController = TextEditingController();
-        final TextEditingController activityIntervalController = TextEditingController();
-        String? errorMessage; // Error message to display
-        String? wordLimitMessage; // Word limit error message
-
         return StatefulBuilder(
           builder: (context, setState) {
-            // Function to update word limit message
             void updateWordLimitMessage(String? message) {
               setState(() {
                 wordLimitMessage = message;
@@ -43,7 +42,7 @@ class Activitycontroller {
                     controller: activityTextController,
                     maxLines: 2,
                     onChanged: (value) {
-                      checkWordLimit(value, setState, updateWordLimitMessage); // Check word limit on input change
+                      checkWordLimit(value, updateWordLimitMessage); // Check word limit on input change
                     },
                     decoration: InputDecoration(
                       hintText: Messages.enterActivityDescription,
@@ -53,7 +52,7 @@ class Activitycontroller {
                   const SizedBox(height: 10),
                   TextField(
                     controller: activityIntervalController,
-                    keyboardType: TextInputType.number, // Only allow numeric input
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       hintText: Messages.enterActivityInterval,
                     ),
@@ -94,13 +93,10 @@ class Activitycontroller {
                         errorMessage = wordLimitMessage;
                       });
                     } else {
-                      setState(() {
-                        activities.add({
-                          'text': description,
-                          'interval': intervalValue,
-                          'isChecked': false,
-                        });
-                        errorMessage = null; // Clear error
+                      activities.add({
+                        'text': description,
+                        'interval': intervalValue,
+                        'isChecked': false,
                       });
                       Navigator.of(context).pop();
                     }
@@ -113,21 +109,24 @@ class Activitycontroller {
         );
       },
     );
+    return activities;
   }
 
   // Function to handle editing an activity
-  void editActivity(BuildContext context, int index, List<Map<String, dynamic>> activityList, Function setState) {
-    final TextEditingController activityTextController = TextEditingController(text: activityList[index]['text']);
-    final TextEditingController activityIntervalController = TextEditingController(text: activityList[index]['interval'].toString());
-    String? errorMessage;
-    String? wordLimitMessage; // Word limit error message
+  Future<List<Map<String, dynamic>>> editActivity(
+    BuildContext context,
+    int index,
+    List<Map<String, dynamic>> activities,
+  ) async {
+    final TextEditingController activityTextController = TextEditingController(text: activities[index]['text']);
+    final TextEditingController activityIntervalController = TextEditingController(text: activities[index]['interval'].toString());
+    String? wordLimitMessage;
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            // Function to update word limit message
             void updateWordLimitMessage(String? message) {
               setState(() {
                 wordLimitMessage = message;
@@ -143,17 +142,17 @@ class Activitycontroller {
                     controller: activityTextController,
                     maxLines: 2,
                     onChanged: (value) {
-                      checkWordLimit(value, setState, updateWordLimitMessage); // Check word limit on input change
+                      checkWordLimit(value, updateWordLimitMessage);
                     },
                     decoration: InputDecoration(
                       hintText: Messages.enterActivityDescription,
-                      errorText: wordLimitMessage, // Show word limit error
+                      errorText: wordLimitMessage,
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: activityIntervalController,
-                    keyboardType: TextInputType.number, // Only allow numeric input
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       hintText: Messages.enterActivityInterval,
                     ),
@@ -176,14 +175,10 @@ class Activitycontroller {
                     if (description.isEmpty || interval.isEmpty || intervalValue == null) {
                       return;
                     } else if (wordLimitMessage != null) {
-                      setState(() {
-                        errorMessage = wordLimitMessage;
-                      });
+                      return;
                     } else {
-                      setState(() {
-                        activityList[index]['text'] = description;
-                        activityList[index]['interval'] = intervalValue;
-                      });
+                      activities[index]['text'] = description;
+                      activities[index]['interval'] = intervalValue;
                       Navigator.of(context).pop();
                     }
                   },
@@ -195,26 +190,20 @@ class Activitycontroller {
         );
       },
     );
+    return activities;
   }
 
   // Function to remove an activity
-  void removeActivity(int index, Function setState, List<Map<String, dynamic>> activities) {
-    setState(() {
-      activities.removeAt(index);
-    });
+  List<Map<String, dynamic>> removeActivity(int index, List<Map<String, dynamic>> activities) {
+    activities.removeAt(index);
+    return activities;
   }
 
-  // Function to uncheck all activities and count how many aren't checked
-  int unCheckAllActivities(Function setState, activities) {
-    int unChecked = 0; // Count of activities that are unchecked
-    setState(() {
-      for (dynamic activity in activities) {
-        if (activity["isChecked"] == true) {
-          activity["isChecked"] = false;
-          unChecked++;
-        }
-      }
-    });
-    return unChecked;
+  // Function to uncheck all activities
+  List<Map<String, dynamic>> uncheckAllActivities(List<Map<String, dynamic>> activities) {
+    for (var activity in activities) {
+      activity['isChecked'] = false;
+    }
+    return activities;
   }
 }
