@@ -15,7 +15,7 @@ class GoalController {
     List<Map<String, dynamic>> subtasks = [];
     String? errorMessage;
     int selectedSubtaskWeight = 1;
-    int selectedGoalWeight = 1;
+    int selectedGoalWeight = 1; // Add this variable for goal weight
 
     showDialog(
       context: context,
@@ -63,6 +63,21 @@ class GoalController {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 10),
+                    // Goal Weight (new dropdown for goal weight)
+                    DropdownButton<int>(
+                      value: selectedGoalWeight,
+                      items: const [
+                        DropdownMenuItem(child: Text("Low"), value: 1),
+                        DropdownMenuItem(child: Text("Medium"), value: 2),
+                        DropdownMenuItem(child: Text("High"), value: 3),
+                      ],
+                      onChanged: (int? newValue) {
+                        dialogSetState(() {
+                          selectedGoalWeight = newValue!;
+                        });
+                      },
                     ),
                     const SizedBox(height: 10),
                     // Subtask Title
@@ -213,7 +228,8 @@ class GoalController {
                           'title': title,
                           'deadline': goalDeadline,
                           'subtasks': subtasks,
-                          'weight': selectedGoalWeight,
+                          'weight':
+                              selectedGoalWeight, // Add the selected goal weight
                           'isChecked': false,
                           'score': 0.00,
                         });
@@ -231,94 +247,97 @@ class GoalController {
     );
   }
 
-void showGoalDetails(BuildContext context, int index,
-    List<Map<String, dynamic>> goals, Function setState) {
-  final goal = goals[index];
-  final subtasks = List<Map<String, dynamic>>.from(goal['subtasks']); // Local copy
+  void showGoalDetails(BuildContext context, int index,
+      List<Map<String, dynamic>> goals, Function setState) {
+    final goal = goals[index];
+    final subtasks =
+        List<Map<String, dynamic>>.from(goal['subtasks']); // Local copy
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter dialogSetState) {
-          return AlertDialog(
-            title: Text(goal['title']),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Deadline: ${goal['deadline']!.toLocal().toString().split(' ')[0]}"),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Subtasks:",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Column(
-                    children: subtasks.map((subtask) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              value: subtask['isChecked'],
-                              onChanged: (value) {
-                                dialogSetState(() {
-                                  subtask['isChecked'] = value;
-                                });
-                                setState(() {
-                                  // Immediately update the parent goal's subtasks
-                                  goal['subtasks'] = subtasks;
-                                  calculateGoalScore(goal);
-                                });
-                              },
-                            ),
-                            Expanded(
-                              child: Text(
-                                "${subtask['title']} - ${subtask['deadline']!.toLocal().toString().split(' ')[0]} (Weight: ${subtask['weight']})",
-                                style: const TextStyle(fontSize: 16),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter dialogSetState) {
+            return AlertDialog(
+              title: Text(goal['title']),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        "Deadline: ${goal['deadline']!.toLocal().toString().split(' ')[0]}"),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Subtasks:",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Column(
+                      children: subtasks.map((subtask) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: subtask['isChecked'],
+                                onChanged: (value) {
+                                  dialogSetState(() {
+                                    subtask['isChecked'] = value;
+                                  });
+                                  setState(() {
+                                    // Immediately update the parent goal's subtasks
+                                    goal['subtasks'] = subtasks;
+                                    calculateGoalScore(goal);
+                                  });
+                                },
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                              Expanded(
+                                child: Text(
+                                  "${subtask['title']} - ${subtask['deadline']!.toLocal().toString().split(' ')[0]} (Weight: ${subtask['weight']})",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Close"),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    goal['subtasks'] = subtasks; // Ensure final save
-                    calculateGoalScore(goal);   // Update score
-                  });
-                },
-                child: const Text("Save"),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    goals.removeAt(index); // Remove the goal
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Delete"),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Close"),
+                ),
+                // Add Edit Button
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    editGoal(
+                        context, index, goals, setState); // Navigate to edit
+                  },
+                  child: const Text("Edit"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      goals.removeAt(index); // Remove the goal
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Delete"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   // Edit an existing goal
   void editGoal(BuildContext context, int index,
       List<Map<String, dynamic>> goals, Function setState) {
@@ -579,7 +598,7 @@ double calculateGoalScore(Map<String, dynamic> goal) {
     } else if (isGoalChecked) {
       return 80.0; // Goal completed, but after the deadline
     } else {
-      return 50.0; // Goal not completed, and no subtasks to evaluate
+      return 0.0; // Goal not completed, and no subtasks to evaluate
     }
   }
 
@@ -618,6 +637,7 @@ double calculateGoalScore(Map<String, dynamic> goal) {
 
   if (!allSubtasksChecked) {
     // Some subtasks are not completed
+    // Apply stronger penalty when goal is also unchecked
     score -= (20.0 * (1 - (completedWeight / totalWeight))); // Penalty based on incomplete subtask weights
   }
 
@@ -634,6 +654,11 @@ double calculateGoalScore(Map<String, dynamic> goal) {
   if (isGoalChecked && allSubtasksChecked && deadline.isBefore(DateTime.now())) {
     // All completed but after the goal deadline
     score -= 10.0; // Penalty for late goal completion
+  }
+
+  // Stronger penalty if no tasks and goal are unchecked
+  if (!isGoalChecked && completedWeight == 0) {
+    score = 0.0; // Ensure score is 0 when neither the goal nor subtasks are completed
   }
 
   // Ensure score is between 0 and 100
