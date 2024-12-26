@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "32005702382",
+    "project_id": "check-mate-0",
+    "storage_bucket": "check-mate-0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32005702382:android:305ae4326a8931b1eba9ff",
+        "android_client_info": {
+          "package_name": "com.example.checkmate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32005702382-lrpiklbllbm1nj6hce77t6n1pv0grfsj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqozcJUMxi4KTYhyAYsB3z2rSaYHY_jKE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32005702382-lrpiklbllbm1nj6hce77t6n1pv0grfsj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "32005702382-leu5en06t436aateska6s4lif9424pgs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.checkmate"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

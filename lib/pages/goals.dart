@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/drawer.dart';
 import 'package:checkmate/models/app_bar.dart';
-import 'package:checkmate/controllers/goalController.dart';
+import 'package:checkmate/controllers/goal_controller.dart';
 import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/const/messages.dart';
 import 'package:checkmate/const/colors.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
 import 'package:checkmate/models/buttons.dart';
-
+import 'package:checkmate/controllers/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,12 +14,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      body: SafeArea(
+      body: Padding(
+        padding: EdgeInsets.all(8.0),
         child: Column(
           children: [
             // Image at the top
@@ -78,8 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
+                      controller: _emailController,
                       decoration: InputDecoration(
-                        labelText: "Username",
+                        labelText: "Email",
                         labelStyle: const TextStyle(color: AppColors.textColor),
                         filled: true,
                         fillColor: AppColors.backgroundColor,
@@ -87,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(16.0),
                           borderSide: BorderSide.none,
                         ),
-                        hintText: "Enter your username",
+                        hintText: "Enter your email",
                         hintStyle: TextStyle(
                             color: AppColors.textColor.withOpacity(0.5)),
                       ),
@@ -98,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
+                      controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
@@ -152,14 +157,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Button(
                       label: "Log in",
-                      onPressed: () {
+                      onPressed: () async {
                         // ---------------> log in logic <------------------------
                         // Directs to home page without validations (for now)
                         /// What should we do:
                         /// pass a function for validating input..
                         /// Inside the function we check the validation of the input then if the user's data is found in the database
                         /// Directs the user to his home page and passing in the parameters queried from the database
-                        navigate(context, '/home');
+
+                        await AuthController().signIn(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          context: context,
+                        );
+                        // navigate(context, "/home");
                       },
                       backgroundColor: AppColors.boxColor,
                       textColor: AppColors.backgroundColor,

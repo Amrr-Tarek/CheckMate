@@ -1,5 +1,6 @@
-import 'package:checkmate/pages/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:checkmate/pages/sign_up.dart';
 import 'package:checkmate/pages/loading_screen.dart';
 import 'package:checkmate/pages/log_in.dart';
 import 'package:checkmate/pages/home.dart';
@@ -8,8 +9,14 @@ import 'package:checkmate/pages/routine.dart';
 import 'package:checkmate/pages/goals.dart';
 import 'package:checkmate/pages/my_profile.dart';
 import 'package:checkmate/pages/settings.dart';
+import 'package:checkmate/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  var message = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  print(message);
   runApp(const MyApp());
 }
 

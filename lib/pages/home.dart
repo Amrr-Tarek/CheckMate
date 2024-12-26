@@ -1,3 +1,4 @@
+import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 // import 'package:checkmate/models/buttons.dart';
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: myBottomNavBar(), // Non-functional
+      // bottomNavigationBar: myBottomNavBar(), // Non-functional
     );
   }
 
@@ -146,12 +147,27 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
-            "Your Name",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+          // User's Name
+          FutureBuilder<String>(
+            future: FirestoreDataSource().getName(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator(); // Show loading indicator
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}'); // Handle error
+              } else if (snapshot.hasData && snapshot.data != "FAIL") {
+                return Text(
+                  snapshot.data!, // Display the name
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                );
+              } else {
+                return const Text(
+                    'Failed to load name'); // Handle "FAIL" or no data
+              }
+            },
           ),
           Text(
             "00XP",

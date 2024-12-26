@@ -27,6 +27,12 @@
 
 - [ ] Add hints to each button
 
+- [ ] Swipe down to reload dashboard
+
+- [ ] Some validations in sign up
+	- [ ] Name must be between 3 and 20 letters
+	- [ ] Confirm password logic
+
 After we finish:
 
 - [ ] Making the app theme convenient with the idea

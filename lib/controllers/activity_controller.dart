@@ -1,3 +1,4 @@
+import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/messages.dart';
 
@@ -93,6 +94,7 @@ class ActivityController {
                         errorMessage = wordLimitMessage;
                       });
                     } else {
+                      FirestoreDataSource().addRoutine(description, intervalValue);
                       activities.add({
                         'text': description,
                         'interval': intervalValue,
