@@ -2,6 +2,7 @@
 - [ ] Idk how do you want the calendar to be implemented in the database
     - Modify the Home Page to fetch the tasks from the database
 - [ ] Add the graph and resize it so it fits the container in the homePage
+- [ ] Further Validation in the Signup page.. In the application scope not firebase scope..
 
 ## Amr
 - [ ] Implement features in the settings page, Start with Account Management!
