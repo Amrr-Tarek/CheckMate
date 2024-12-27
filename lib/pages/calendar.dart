@@ -1,8 +1,14 @@
+import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/models/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/pages/goals.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:checkmate/models/app_bar.dart';
+import 'package:checkmate/controllers/firestore_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -24,7 +30,34 @@ class _CalendarState extends State<Calendar> {
   List<Event> _getEventsForDay(DateTime day) {
     return goals[day] ?? [];
   }
+  // // ==================================================================
 
+  // // firebase add function to the database
+  // // ======================================
+
+  // // Create a CollectionReference called users that references the firestore collection
+  // // create an intance of collection (No-sql) database
+  // CollectionReference calendarInfo = FirebaseFirestore.instance.collection('calendar');
+  // FirestoreDataSource _firestoreDataSource = FirestoreDataSource();
+
+  // Future<void> addEvent(eventName, eventDay) async {
+  // // Call the user's CollectionReference to add a new user
+  //   await FirebaseFirestore.instance
+  //   .collection('users')
+  //   .doc(_auth.currentUser!.uid)
+  //   .collection('calendar')
+  //   .add({
+  //     'event': eventName,
+  //     'day': eventDay,
+  //   });
+  //   // =============================================================
+
+  // -----------------------------------------------------------------
+  //   String createDocId() {
+  //   String docId = Uuid().v4();
+  //   return docId;
+  // }
+  // -----------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,9 +97,16 @@ class _CalendarState extends State<Calendar> {
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
+                  // ======================================================
+                  // add event to the database
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if(_eventController.text.isNotEmpty) {
+                        // ==========================
+                        // Add event to the database
+                        // addEvent(_eventController.text, _selectedDay);
+                        FirestoreDataSource().addCalendarEvent(_eventController.text, _selectedDay);
+
                         setState(() {
                           // Create a new event object
                           Event newEvent = Event(title: _eventController.text);
@@ -165,8 +205,15 @@ class _CalendarState extends State<Calendar> {
                     ),
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
-                      setState(() {
-                        goals[_selectedDay]?.removeAt(index);
+                      FirestoreDataSource().getDocId(event.title, _selectedDay).then((docId) {
+                        if (docId != null) {
+                          FirestoreDataSource().deleteCalendarEvent(docId);
+                        setState(() {
+                          goals[_selectedDay]?.removeAt(index);
+                        });
+                        }else{
+                          print("Document ID is null");
+                        }
                       });
                     },
                     child: Card(
@@ -191,9 +238,16 @@ class _CalendarState extends State<Calendar> {
                             color: Colors.red,
                           ),
                           onPressed: () {
-                            setState(() {
-                              goals[_selectedDay]?.removeAt(index);
-                            });
+                            FirestoreDataSource().getDocId(event.title, _selectedDay).then((docId) {
+                              if (docId != null) {
+                                FirestoreDataSource().deleteCalendarEvent(docId);
+                        setState(() {
+                          goals[_selectedDay]?.removeAt(index);
+                        });
+                              }else{
+                                print("Document ID is null");
+                              }
+                      });
                           },
                         ),
                       ),

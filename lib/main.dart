@@ -11,6 +11,7 @@ import 'package:checkmate/pages/my_profile.dart';
 import 'package:checkmate/pages/settings.dart';
 import 'package:checkmate/firebase_options.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var message = await Firebase.initializeApp(

@@ -3,6 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
+// ignore: depend_on_referenced_packages
+import 'package:checkmate/pages/calendar.dart';
 
 class FirestoreDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -57,4 +59,133 @@ class FirestoreDataSource {
       return true;
     }
   }
+
+  // =========================================================================
+  // Calebdar database manuplation
+
+  // add event to the calendar
+  String createDocId() {
+    String docId = Uuid().v4();
+    return docId;
+  }
+  Future<void> addCalendarEvent(String eventName, DateTime eventDay) async {
+    try {
+      // i
+      String docId = createDocId();
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('calendar')
+          .doc(docId)
+          .set({
+            'id': docId,
+        'event': eventName,
+        'day': eventDay,
+      });
+      // return true;
+    } catch (e) {
+      print("Exception: $e");
+      // return true;
+    }
+  }
+
+  // // GET THE ID OF DOC
+  // Future<String> getDocId(String eventName, DateTime eventDay) async {
+  //   try {
+  //     String docId = createDocId();
+  //     final docSnapShot = await _firestore
+  //         .collection('users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('calendar')
+  //         .where('event', isEqualTo: eventName)
+  //         .where('day', isEqualTo: eventDay)
+  //         .get();
+  //     return docSnapShot.docs[0].id;
+  //   } catch (e) {
+  //     print("Couldn't resolve name $e");
+  //     return "FAIL";
+  //   }
+  // }
+  // ------------------------------------------------------------------------
+  Future<String?> getDocId(String eventName, DateTime eventDay) async {
+  try {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .collection('calendar')
+        .where('event', isEqualTo: eventName)
+        .where('day', isEqualTo: eventDay)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs[0].id;
+    } else {
+      print("No document found for the given event and day.");
+      return null;
+    }
+  } catch (e) {
+    print("Couldn't resolve document ID: $e");
+    return null;
+  }
 }
+
+  // delete event from the calendar
+  // Future<void> deleteCalendarEvent(String id) async {
+  //   try {
+  //     // print(id);
+  //     await final collectionRef _firestore
+  //         .collection('users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('calendar');
+  //         final querySnapshot = await collectionRef.get();
+  //   for (var doc in querySnapshot.docs) {
+  //     await doc.reference.delete();
+  //   }
+  //   print("All calendar events deleted successfully.");
+  //   } catch (e) {
+  //     print("Exception: $e");
+  //   }
+  // }
+//   Future<void> deleteAllCalendarEvents(String id) async {
+//   try {
+//     await _firestore
+//         .collection('users')
+//         .doc(_auth.currentUser!.uid)
+//         .collection('calendar')
+//         .where('id', isEqualTo: id)
+//         .get()
+//         .then((querySnapshot) {
+//           for (var doc in querySnapshot.docs) {
+//             doc.reference.delete();
+//           }
+//         });
+        
+//     // final querySnapshot = await collectionRef.get();
+//     // for (var doc in querySnapshot.docs) {
+//     //   // if (doc.id == docSnapShot.docs[0].id) {
+//     //   //   continue;
+//     //   // }
+//     //   await doc.reference.delete();
+//     // }
+//     print("All calendar events deleted successfully.");
+//   } catch (e) {
+//     print("Exception: $e");
+//   }
+// }
+
+
+Future<void> deleteCalendarEvent(String eventId) async {
+  try {
+    await _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .collection('calendar')
+        .doc(eventId)
+        .delete();
+    print("Event with ID $eventId deleted successfully.");
+  } catch (e) {
+    print("Exception: $e");
+  }
+}
+}
+
