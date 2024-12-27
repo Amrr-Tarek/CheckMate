@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:checkmate/data/Line_chart_data.dart';
 import 'package:checkmate/const/colors.dart';
 // import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/models/app_bar.dart';
@@ -6,6 +8,7 @@ import 'package:checkmate/models/drawer.dart';
 import 'package:checkmate/models/tasks_home.dart';
 
 class HomePage extends StatefulWidget {
+  
   final String title = "Home";
 
   const HomePage({super.key});
@@ -21,6 +24,11 @@ class _HomePageState extends State<HomePage> {
   List<TaskModel> tasks = [];
   // final List _pages = ['/home', '/routine', '/goals', '/myprofile'];
 
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
   void fetchData() {
     tasks = TaskModel.getTasks();
   }
@@ -29,6 +37,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // Is ran everytime setState is called
     fetchData();
+    // create an instance of LineDate that contains random data
+    final data = LineData();
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),
       drawer: MyDrawer.createDrawer(context, "dashboard"),
@@ -36,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             _nameXP(),
-            _graph(),
+            _graph(data),
             SizedBox(height: 10),
             _tasks(),
           ],
@@ -125,17 +135,107 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container _graph() {
+  Container _graph(LineData data) {
     return Container(
-      color: Colors.red,
-      height: 200,
-      child: Center(
-          child: Text("Visual Graph here",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30))),
-    );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Your Progress',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10),
+          AspectRatio(
+            aspectRatio: 16 / 6,
+            child: LineChart(
+                    LineChartData(
+                    backgroundColor: const Color(0xFFF0F0F0), // Light grey background
+                    lineTouchData: LineTouchData(
+                      handleBuiltInTouches: true,
+                    ),
+                    gridData: FlGridData(
+                      show: false,
+                    ),
+                    titlesData: FlTitlesData(
+                      rightTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: false,
+                          ),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: false,
+                          ),
+                        ),
+                        // Left tittles of the graph
+                        // =========================
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                            return data.leftTitle[value.toInt()] != null
+                                ? Text(data.leftTitle[value.toInt()].toString(),
+                                    style: TextStyle(
+                                        fontSize: 12, 
+                                        color: Colors.grey.withOpacity(0.5),
+                                    ))
+                                : const SizedBox();
+    
+                          },
+                          interval: 1,
+                          reservedSize: 24,
+                          ),
+                        ),
+                        // Bottom tittles of the graph
+                        // =========================
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                            return data.bottomTitle[value.toInt()] != null
+                                ? Text(data.bottomTitle[value.toInt()].toString(),
+                                    style: TextStyle(
+                                        color: Colors.grey.withOpacity(0.5)),)
+                                : const SizedBox();
+    
+                          },
+                          interval: 1,
+                          reservedSize: 24,
+                          ),
+                        ),
+                      ),
+                      borderData: FlBorderData(
+                        show: true,
+                        border: Border.all(color: const Color.fromARGB(255, 37, 34, 97), width: 1),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: data.spots,
+                          dotData: FlDotData(show: false),
+                          show: true,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.blue, Colors.purple],
+                          ),
+                          color: const Color.fromARGB(255, 24, 121, 102),
+                          belowBarData: BarAreaData(show: false),
+                        ),
+                      ],
+                      minX: 0,
+                      maxX: 120,
+                      minY: 0,
+                      maxY: 100,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+      }
   }
 
   Container _nameXP() {
@@ -164,46 +264,3 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  // Container __body() {
-  //   return Container(
-  //     margin: const EdgeInsets.all(10),
-  //     child: Center(
-  //         child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         const Text(
-  //           "Hello :)\nThis Page is 'Getting Started' for you to implement the front end of the pages listed in the buttons below\nPress on the button to take you to the page (crazy right?!)\nادعيلي (معرفش ليه بس اخوك محتاج الدعوة)",
-  //           style: TextStyle(fontSize: 20),
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         const SizedBox(height: 10),
-  //         Button(
-  //             text: "Calendar",
-  //             onPress: () {
-  //               navigate(context, '/calendar');
-  //             }),
-  //         Button(
-  //             text: "Routine",
-  //             onPress: () {
-  //               navigate(context, '/routine');
-  //             }),
-  //         Button(
-  //             text: "Goals",
-  //             onPress: () {
-  //               navigate(context, '/goals');
-  //             }),
-  //         Button(
-  //             text: "My Profile",
-  //             onPress: () {
-  //               navigate(context, '/myprofile');
-  //             }),
-  //         Button(
-  //             text: "Settings",
-  //             onPress: () {
-  //               navigate(context, "/settings");
-  //             }),
-  //       ],
-  //     )),
-  //   );
-  // }
-}
