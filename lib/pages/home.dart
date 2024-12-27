@@ -1,10 +1,12 @@
-import 'package:checkmate/controllers/firestore_controller.dart';
+import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 // import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/models/drawer.dart';
 import 'package:checkmate/models/tasks_home.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final String title = "Home";
@@ -29,6 +31,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Is ran everytime setState is called
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserModel user = userProvider.user;
     fetchData();
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),
@@ -36,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _nameXP(),
+            _nameXP(user.name),
             _graph(),
             SizedBox(height: 10),
             _tasks(),
@@ -139,7 +143,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container _nameXP() {
+  Container _nameXP(String name) {
     return Container(
       height: 80,
       color: Colors.amber,
@@ -148,26 +152,12 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           // User's Name
-          FutureBuilder<String>(
-            future: FirestoreDataSource().getName(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator(); // Show loading indicator
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}'); // Handle error
-              } else if (snapshot.hasData && snapshot.data != "FAIL") {
-                return Text(
-                  snapshot.data!, // Display the name
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                );
-              } else {
-                return const Text(
-                    'Failed to load name'); // Handle "FAIL" or no data
-              }
-            },
+          Text(
+            name, // Display the name
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           Text(
             "00XP",

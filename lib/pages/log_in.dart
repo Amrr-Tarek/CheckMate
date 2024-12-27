@@ -162,11 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           label: "Log in",
                           onPressed: () async {
                             // ---------------> log in logic <------------------------
-                            // Directs to home page without validations (for now)
-                            /// What should we do:
-                            /// pass a function for validating input..
-                            /// Inside the function we check the validation of the input then if the user's data is found in the database
-                            /// Directs the user to his home page and passing in the parameters queried from the database
 
                             await AuthController().signIn(
                               email: _emailController.text,

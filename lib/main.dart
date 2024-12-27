@@ -1,3 +1,4 @@
+import 'package:checkmate/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:checkmate/pages/sign_up.dart';
@@ -10,6 +11,7 @@ import 'package:checkmate/pages/goals.dart';
 import 'package:checkmate/pages/my_profile.dart';
 import 'package:checkmate/pages/settings.dart';
 import 'package:checkmate/firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +19,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   print(message);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

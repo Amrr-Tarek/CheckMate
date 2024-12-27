@@ -1,8 +1,11 @@
 import 'package:checkmate/controllers/auth_controller.dart';
+import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/toast.dart';
+import 'package:checkmate/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/app_bar.dart';
+import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -19,6 +22,9 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserModel user = userProvider.user;
+
     return Scaffold(
       appBar: appBar(context, "Settings"),
       body: SingleChildScrollView(
@@ -29,7 +35,7 @@ class _SettingsState extends State<Settings> {
             children: [
               __generalSection(),
               const Divider(),
-              __accountManagement(),
+              __accountManagement(user.name, user.email),
               const Divider(),
               __backup(),
               const Divider(),
@@ -105,7 +111,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Column __accountManagement() {
+  Column __accountManagement(String? name, String? email) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -116,8 +122,11 @@ class _SettingsState extends State<Settings> {
           icon: Icons.person,
           title: "Profile Information",
           children: [
-            _buildSettingTile(title: "Name", subtitle: "Your Name"),
-            _buildSettingTile(title: "E-mail", subtitle: "email@example.com"),
+            _buildSettingTile(
+                title: "Name", subtitle: (name != null) ? name : "Your Name"),
+            _buildSettingTile(
+                title: "E-mail",
+                subtitle: (email != null) ? email : "email@example.com"),
             _buildSettingTile(title: "Logo"),
           ],
         ),
@@ -125,11 +134,11 @@ class _SettingsState extends State<Settings> {
             icon: Icons.sync, title: "Sync Options", children: []),
         _buildExpansionTile(
           icon: Icons.security,
-          title: "Security and Privcy",
+          title: "Security and Privacy",
           children: [
             _buildSettingTile(
                 title:
-                    "Change your Password"), // Maybe Redirect to another page
+                    "Reset your Password"), // Maybe Redirect to another page
             _buildSettingTile(
               title: "Allow data sharing",
               subtitle:
