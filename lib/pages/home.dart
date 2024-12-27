@@ -33,9 +33,9 @@ class _HomePageState extends State<HomePage> {
     tasks = TaskModel.getTasks();
   }
 
+  // Is ran everytime setState is called
   @override
   Widget build(BuildContext context) {
-    // Is ran everytime setState is called
     fetchData();
     // create an instance of LineDate that contains random data
     final data = LineData();
@@ -137,14 +137,18 @@ class _HomePageState extends State<HomePage> {
 
   Container _graph(LineData data) {
     return Container(
+      padding: EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Your Progress',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              'Your Progress',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           SizedBox(height: 10),
