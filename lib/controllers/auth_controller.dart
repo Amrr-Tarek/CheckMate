@@ -1,8 +1,10 @@
 import 'package:checkmate/controllers/firestore_controller.dart';
+import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 /// Handles user authentication, including email/password, Google, and GitHub sign-in methods.
 /// Provides methods for registration, login (+ google and github), and logout.
@@ -23,6 +25,9 @@ class AuthController {
         password: password,
       );
       await FirestoreDataSource().createUser(name, email);
+      String uid = _auth.currentUser!.uid;
+      await Provider.of<UserProvider>(context, listen: false)
+          .fetchUserData(uid);
       showToast("Sign-up successful! Welcome, $name.", Colors.green);
       Navigator.pushReplacementNamed(context, "/home");
     } on FirebaseAuthException catch (e) {
@@ -43,6 +48,9 @@ class AuthController {
         email: email,
         password: password,
       );
+      String uid = _auth.currentUser!.uid;
+      await Provider.of<UserProvider>(context, listen: false)
+          .fetchUserData(uid);
       Navigator.pushReplacementNamed(context, "/home");
     } on FirebaseAuthException catch (e) {
       _handleAuthError(e);

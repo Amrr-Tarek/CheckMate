@@ -2,14 +2,17 @@
 - [ ] Idk how do you want the calendar to be implemented in the database
     - [ ] Upon adding tasks in the calendar.. append it to the firestore database
     - [ ] Modify the Home Page to fetch the tasks from the firestore database
-- [ ] Add the graph and resize it so it fits the container in the homePage
+- [x] Add the graph and resize it so it fits the container in the homePage
 - [ ] Further Validation in the Signup page.. In the application scope not firebase scope..
 
 ## Amr
 - [ ] Implement features in the settings page, Start with Account Management!
-- [ ] Sign out
-- [ ] Google Sign in
-- [ ] Idk what else
+    - [x] Change Name
+    - [x] Sign out
+    - [x] Delete Account
+    - [ ] ...
+- [x] Google Sign in
+- [x] Github Sign in
 
 ## Yahya
 - [ ] Integrate firestore with the routines page

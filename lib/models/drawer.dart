@@ -1,5 +1,8 @@
+import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/navigator.dart';
+import 'package:checkmate/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -8,23 +11,27 @@ class MyDrawer extends StatefulWidget {
   State<MyDrawer> createState() => _MyDrawerState();
 
   static Drawer createDrawer(BuildContext context, String selected) {
-  return Drawer(
-    child: SingleChildScrollView(
-      child: Column(
-        children: [
-          const MyDrawer(),
-          myDrawerList(context, selected),
-        ],
-      ),
-    ),
-  );
-}
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserModel user = userProvider.user;
 
+    return Drawer(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const MyDrawer(),
+            myDrawerList(context, selected, user.name),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserModel user = userProvider.user;
     return Container(
       color: const Color.fromRGBO(179, 153, 241, 0.3),
       width: double.infinity,
@@ -44,7 +51,7 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
             ),
           ),
-          const Text("Your Name!",
+          Text(user.name,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
         ],
       ),
@@ -112,7 +119,7 @@ class DrawerMenuButtons extends StatelessWidget {
   }
 }
 
-Widget myDrawerList(BuildContext context, String? selected) {
+Widget myDrawerList(BuildContext context, String? selected, String name) {
   return Container(
     padding: const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
     child: Column(
@@ -157,9 +164,9 @@ Widget myDrawerList(BuildContext context, String? selected) {
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Expanded(
+                  Expanded(
                       child: Text(
-                    "Your Name",
+                    name,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   )),
                   Container(

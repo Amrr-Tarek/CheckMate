@@ -1,5 +1,9 @@
+import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 // ignore: depend_on_referenced_packages
 import 'package:checkmate/pages/calendar.dart';
@@ -12,10 +16,12 @@ class FirestoreDataSource {
 
   Future<bool> createUser(String name, String email) async {
     try {
-      await _firestore
-          .collection('users')
-          .doc(_auth.currentUser!.uid)
-          .set({"id": _auth.currentUser!.uid, "email": email, "name": name});
+      await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
+        "id": _auth.currentUser!.uid,
+        "email": email.toLowerCase(),
+        "name": name,
+        "xp": 0,
+      });
       print("===============================================");
       print(_auth.currentUser!.uid);
       return true;
@@ -43,16 +49,28 @@ class FirestoreDataSource {
     }
   }
 
-  Future<String> getName() async {
+  // Updates the name of the user in the Firestore database
+  Future<void> updateName(String name, BuildContext context) async {
     try {
-      final docSnapShot = await _firestore
-          .collection('users')
+      await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .update({"name": name});
+
+      // Fetching the user's name for extra security
+      final userDoc = await _firestore
+          .collection("users")
           .doc(_auth.currentUser!.uid)
           .get();
-      return await docSnapShot.data()!["name"];
+      if (userDoc.exists) {
+        Provider.of<UserProvider>(context, listen: false).setUser(UserModel(
+          name: userDoc.data()!["name"],
+          email: userDoc.data()!["email"],
+          xp: userDoc.data()!["xp"],
+        ));
+      }
     } catch (e) {
-      print("Couldn't resolve name!! $e.\n");
-      return "FAIL";
+      print("Error updating name: $e");
     }
   }
 
