@@ -64,6 +64,7 @@ class FirestoreDataSource {
         Provider.of<UserProvider>(context, listen: false).setUser(UserModel(
           name: userDoc.data()!["name"],
           email: userDoc.data()!["email"],
+          xp: userDoc.data()!["xp"],
         ));
       }
     } catch (e) {

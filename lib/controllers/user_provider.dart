@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:checkmate/models/user_model.dart';
 
 class UserProvider with ChangeNotifier {
-  UserModel _user = UserModel(name: "", email: "");
+  UserModel _user = UserModel(name: "", email: "", xp: 0);
 
   UserModel get user => _user; // Getter
 
@@ -23,6 +23,7 @@ class UserProvider with ChangeNotifier {
         _user = UserModel(
           name: userDoc["name"],
           email: userDoc["email"],
+          xp: userDoc["xp"],
         );
         notifyListeners();
       } else {

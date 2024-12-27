@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _nameXP(user.name),
+            _nameXP(user.name, user.xp),
             _graph(),
             SizedBox(height: 10),
             _tasks(),
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container _nameXP(String name) {
+  Container _nameXP(String name, int xp) {
     return Container(
       height: 80,
       color: Colors.amber,
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Text(
-            "00XP",
+            "$xp XP",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,

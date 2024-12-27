@@ -24,7 +24,7 @@ class _MyProfileState extends State<MyProfile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            __nameLogo(user.name),
+            __nameLogo(user.name, user.xp),
             const SizedBox(height: 10),
             const Divider(),
             __emailSection(user.email),
@@ -87,7 +87,7 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Container __nameLogo(String name) {
+  Container __nameLogo(String name, int xp) {
     return Container(
       padding: const EdgeInsets.all(20),
       color: Colors.amber,
@@ -106,7 +106,7 @@ class _MyProfileState extends State<MyProfile> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "00 XP",
+                  "$xp XP",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 )
               ],
