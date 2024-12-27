@@ -25,6 +25,9 @@ class AuthController {
         password: password,
       );
       await FirestoreDataSource().createUser(name, email);
+      String uid = _auth.currentUser!.uid;
+      await Provider.of<UserProvider>(context, listen: false)
+          .fetchUserData(uid);
       showToast("Sign-up successful! Welcome, $name.", Colors.green);
       Navigator.pushReplacementNamed(context, "/home");
     } on FirebaseAuthException catch (e) {

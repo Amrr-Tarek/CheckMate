@@ -1,9 +1,12 @@
-Added a Provider
+Change name + some improvements
 
 # Commit Changelog
 - Added:
-    - Provider (A local storage to fetch the user's data once from the firestore and use the data across the application)
+    - XP field in the user's document in firestore
+    - Change name feature in the settings page
 - Fixed:
-    - A Typo in the settings page
+    - Reversed obscure text eye
 - Updated:
-    - Name and email placeholders now displays the correct user's name and email
+    - Obscure text eye now hides/unhides both password fields
+    - Email is now passed to firestore lowercase
+    - Removed the getName method in firestore_controller

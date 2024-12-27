@@ -53,7 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   labelText: 'Password',
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
@@ -73,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 decoration:
                     const InputDecoration(labelText: 'Confirm Password'),
-                obscureText: true,
+                obscureText: _obscureText,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please confirm your password';

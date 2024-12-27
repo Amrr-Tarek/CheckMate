@@ -1,4 +1,5 @@
 import 'package:checkmate/controllers/auth_controller.dart';
+import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/toast.dart';
 import 'package:checkmate/models/user_model.dart';
@@ -123,7 +124,53 @@ class _SettingsState extends State<Settings> {
           title: "Profile Information",
           children: [
             _buildSettingTile(
-                title: "Name", subtitle: (name != null) ? name : "Your Name"),
+                title: "Name",
+                subtitle: (name != null) ? name : "Your Name",
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    // Maybe add a 2 hours cooldown before changing the name again
+                    // Add a dialog to edit the name
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          final TextEditingController _nameController =
+                              TextEditingController();
+                          return AlertDialog(
+                            title: const Text("Edit Name"),
+                            content: TextField(
+                              controller: _nameController,
+                              decoration: const InputDecoration(
+                                labelText: "Enter your new name",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  if (_nameController.text.isNotEmpty) {
+                                    // Update the name in the database
+                                    await FirestoreDataSource()
+                                        .updateName(_nameController.text.trim(), context);
+                                        showToast("Name updated successfully", Colors.blue);
+                                    Navigator.pop(context);
+                                  } else {
+                                    showToast("Name cannot be empty", Colors.red);
+                                  }
+                                },
+                                child: const Text("Save"),
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                )),
             _buildSettingTile(
                 title: "E-mail",
                 subtitle: (email != null) ? email : "email@example.com"),
@@ -137,8 +184,7 @@ class _SettingsState extends State<Settings> {
           title: "Security and Privacy",
           children: [
             _buildSettingTile(
-                title:
-                    "Reset your Password"), // Maybe Redirect to another page
+                title: "Reset your Password"), // Maybe Redirect to another page
             _buildSettingTile(
               title: "Allow data sharing",
               subtitle:
