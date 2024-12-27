@@ -33,6 +33,8 @@
 	- [ ] Name must be between 3 and 20 letters
 	- [ ] Confirm password logic
 
+- [ ] Currently the app doesn't allow multiple account instances with the same email.. Solve the problem by adding linked accounts feature
+
 After we finish:
 
 - [ ] Making the app theme convenient with the idea
