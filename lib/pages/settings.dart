@@ -1,3 +1,6 @@
+import 'package:checkmate/controllers/auth_controller.dart';
+import 'package:checkmate/models/toast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/app_bar.dart';
 
@@ -146,14 +149,94 @@ class _SettingsState extends State<Settings> {
           title: "Sign out",
           subtitle: "Log out from your account",
           // Log out from the session and redirect to the Home page
-          onTap: () {},
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Sign Out"),
+                  content: const Text("Are you sure you want to sign out?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        await AuthController().signOut();
+                        AuthController().signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          "/login",
+                          (Route<dynamic> route) =>
+                              false, // Removes all routes in the stack
+                        );
+                      },
+                      child: const Text("Sign Out"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
         _buildSettingTile(
           leading: Icons.delete_forever_outlined,
           title: "Delete Account Forever",
-          subtitle: "This action is irreversable!",
-          // Displays a pop up with a confirmation with an acknowledgment that the user understands the action cannot be undone
-          onTap: () {},
+          subtitle: "This action is irreversible!",
+          onTap: () async {
+            final User? user = FirebaseAuth.instance.currentUser;
+            if (user == null) {
+              showToast("No user is signed in!", Colors.red);
+              return;
+            }
+
+            final List<UserInfo> providerData = user.providerData;
+            final bool isEmailUser =
+                providerData.any((info) => info.providerId == "password");
+            final bool isGoogleUser =
+                providerData.any((info) => info.providerId == "google.com");
+            final bool isGithubUser =
+                providerData.any((info) => info.providerId == "github.com");
+
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Delete Account"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                          "Are you sure you want to delete your account? This action is irreversible!"),
+                      const SizedBox(height: 10),
+                      if (isGoogleUser || isGithubUser)
+                        const Text(
+                            "You will be asked to reauthenticate with your provider."),
+                      if (isEmailUser)
+                        const Text(
+                            "You will be asked to enter your password to proceed."),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        await AuthController().deleteAccount(context: context);
+                      },
+                      child: const Text("Delete"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ],
     );
@@ -259,4 +342,3 @@ class _SettingsState extends State<Settings> {
     );
   }
 }
-

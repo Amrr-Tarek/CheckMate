@@ -1,4 +1,3 @@
-import 'package:checkmate/models/navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
@@ -185,20 +184,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      // Login with Google
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Button(
-                          label: "Log in using Google",
-                          onPressed: () => AuthController()
-                              .signInWithGoogle(context: context),
-                          backgroundColor: AppColors.backgroundColor,
-                          textColor: AppColors.boxColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          borderRadius: 24.0,
-                          height: 48.0,
-                        ),
+                      // Google and github buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Google Button
+                          _siginInWith(
+                            () => AuthController()
+                                .signInWithGoogle(context: context),
+                            'assets/google-logo.png',
+                          ),
+                          SizedBox(width: 32),
+                          // Github Button
+                          _siginInWith(
+                              () => AuthController()
+                                  .signInWithGithub(context: context),
+                              'assets/github-logo.png')
+                        ],
                       ),
                     ],
                   ),
@@ -221,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // ---------------> sign up logic <------------------------
+                          Navigator.pushReplacementNamed(context, "/signup");
                         },
                         child: const Text(
                           "Sign up",
@@ -238,6 +240,32 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector _siginInWith(onTap, iconPath) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: AppColors.backgroundColor,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(150, 158, 158, 158),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            )
+          ],
+        ),
+        child: Image.asset(
+          iconPath,
+          height: 60,
+          width: 60,
         ),
       ),
     );
