@@ -205,8 +205,10 @@ class _CalendarState extends State<Calendar> {
                     ),
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
+                      // get the Id of the event to delete it
                       FirestoreDataSource().getDocId(event.title, _selectedDay).then((docId) {
                         if (docId != null) {
+                          // delete the calendar event based on the certain id
                           FirestoreDataSource().deleteCalendarEvent(docId);
                         setState(() {
                           goals[_selectedDay]?.removeAt(index);

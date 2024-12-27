@@ -207,5 +207,25 @@ Future<void> deleteCalendarEvent(String eventId) async {
     print("Exception: $e");
   }
 }
+
+// ==============================================================
+// Future<void> addGoals(String eventName, DateTime eventDay) async {
+//     try {
+      
+//       String docId = createDocId();
+//       await _firestore
+//           .collection('users')
+//           .doc(_auth.currentUser!.uid)
+//           .collection('calendar')
+//           .doc(docId)
+//           .set({
+//             'id': docId,
+//         'event': eventName,
+//         'day': eventDay,
+//       });
+//     } catch (e) {
+//       print("Exception: $e");
+//     }
+// }
 }
 
