@@ -125,11 +125,11 @@ class FirestoreDataSource {
           .doc(_auth.currentUser!.uid)
           .collection("routine")
           .doc(routine_id)
-          .delete(); // Deletes the document
+          .delete();
       return true;
     } catch (e) {
       print("Exception: $e");
-      return false; // Return false in case of error
+      return false;
     }
   }
 
@@ -139,7 +139,7 @@ class FirestoreDataSource {
           .collection("users")
           .doc(_auth.currentUser!.uid)
           .collection("routine")
-          .get(); // Gets all documents in the "routine" collection for the user
+          .get();
 
       List<Map<String, dynamic>> routines = [];
       for (var doc in snapshot.docs) {
@@ -158,6 +158,8 @@ class FirestoreDataSource {
       DateTime date = DateTime.now();
       var uuid =
           Uuid().v4(); // Creates a unique id for the collection (Primary Key)
+
+      // Create the goal document
       await _firestore
           .collection("users")
           .doc(_auth.currentUser!.uid)
@@ -168,11 +170,25 @@ class FirestoreDataSource {
         'date': date,
         'title': title,
         'deadline': deadline,
-        'subtasks': subtasks,
-        'weight': weight, // Add the selected goal weight
+        'weight': weight,
         'isChecked': false,
         'score': 0.00,
       });
+
+      // Add each subtask as a separate document inside the 'subtasks' subcollection
+      for (var subtask in subtasks) {
+        var uuids =
+          Uuid().v4();
+        // Assuming each subtask is a map containing the necessary data (like 'taskName' or 'status')
+        await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("goals")
+            .doc(uuids)
+            .collection("subtasks")
+            .add(subtask); // Add each subtask as a document
+      }
+
       return uuid;
     } catch (e) {
       print("Exception: $e");
@@ -189,6 +205,7 @@ class FirestoreDataSource {
       bool isChecked,
       double score) async {
     try {
+      // Update goal document fields
       await _firestore
           .collection("users")
           .doc(_auth.currentUser!.uid)
@@ -197,9 +214,26 @@ class FirestoreDataSource {
           .update({
         'title': title,
         'deadline': deadline,
-        'subtasks': subtasks,
-        'weight': weight, // Add the selected goal weight
+        'weight': weight,
+        'isChecked': isChecked,
+        'score': score,
       });
+
+      // Update each subtask document in the subtasks subcollection
+      for (var subtask in subtasks) {
+        // Assuming each subtask has a unique ID, you may need to provide the ID for each subtask
+        var subtaskId =
+            subtask['id']; // You should have an 'id' for each subtask
+        await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("goals")
+            .doc(goal_id)
+            .collection("subtasks")
+            .doc(subtaskId) // Update the specific subtask document by its ID
+            .update(subtask);
+      }
+
       return true;
     } catch (e) {
       print("Exception: $e");
@@ -207,20 +241,37 @@ class FirestoreDataSource {
     }
   }
 
-  Future<bool> update_goal(String goal_id, List<Map<String, dynamic>> subtasks,
+  Future<bool> updateGoal(String goal_id, List<Map<String, dynamic>> subtasks,
       bool isChecked, double score) async {
     try {
-      DateTime data = DateTime.now();
-      await _firestore
+      // Reference to the goal document
+      var goalDocRef = _firestore
           .collection("users")
           .doc(_auth.currentUser!.uid)
           .collection("goals")
-          .doc(goal_id)
-          .update({
-        'subtasks': subtasks,
+          .doc(goal_id);
+
+      // Reference to the subtasks subcollection
+      var subtasksCollectionRef = goalDocRef.collection("subtasks");
+
+      // Delete all existing subtasks
+      var snapshot = await subtasksCollectionRef.get();
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      // Add new subtasks
+      for (var subtask in subtasks) {
+        await subtasksCollectionRef.add(subtask);
+      }
+
+      // Update the goal document with the new subtasks and other fields
+      await goalDocRef.update({
+        'subtasks': subtasks, // Update the subtasks field in the goal document
         'isChecked': isChecked,
         'score': score,
       });
+
       return true;
     } catch (e) {
       print("Exception: $e");
@@ -235,46 +286,113 @@ class FirestoreDataSource {
           .doc(_auth.currentUser!.uid)
           .collection("goals")
           .doc(goal_id)
-          .delete(); // Deletes the document
+          .delete();
       return true;
     } catch (e) {
       print("Exception: $e");
-      return false; // Return false in case of error
+      return false;
     }
   }
 
-Future<List<Map<String, dynamic>>> getAllGoals() async {
-  try {
-    var snapshot = await _firestore
-        .collection("users")
-        .doc(_auth.currentUser!.uid)
-        .collection("goals")
-        .get(); // Gets all documents in the "goals" collection for the user
+  Future<List<Map<String, dynamic>>> getAllGoals() async {
+    try {
+      var snapshot = await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .get();
 
-    List<Map<String, dynamic>> goals = [];
-    for (var doc in snapshot.docs) {
-      var data = doc.data();
+      List<Map<String, dynamic>> goals = [];
+      for (var doc in snapshot.docs) {
+        var data = doc.data();
 
-      // Ensure the 'subtasks' field is treated as a List<Map<String, dynamic>> if it exists
-      if (data['subtasks'] != null && data['subtasks'] is List) {
-        // Explicitly cast each subtask to Map<String, dynamic>
-        data['subtasks'] = (data['subtasks'] as List).map((e) {
-          if (e is Map) {
-            // Cast the Map<dynamic, dynamic> to Map<String, dynamic>
-            return Map<String, dynamic>.from(e);
-          } else {
-            return {}; // Return an empty map if it's not a Map<String, dynamic>
+        // Ensure the 'subtasks' field is treated as a List<Map<String, dynamic>> if it exists
+        if (data['subtasks'] != null && data['subtasks'] is List) {
+          // Convert subtasks into List<Map<String, dynamic>> if it's a list
+          data['subtasks'] = (data['subtasks'] as List).map((subtask) {
+            if (subtask is Map) {
+              var subtaskMap = Map<String, dynamic>.from(subtask);
+
+              // Convert the deadline to a DateTime if it's a Timestamp
+              if (subtaskMap['deadline'] is Timestamp) {
+                subtaskMap['deadline'] =
+                    (subtaskMap['deadline'] as Timestamp).toDate();
+              }
+              return subtaskMap;
+            }
+            return {}; // Return an empty map for invalid entries
+          }).toList();
+        }
+
+        // Fetch subtasks from the subcollection "subtasks" in the goal document if available
+        var subtasksSnapshot = await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("goals")
+            .doc(doc.id)
+            .collection("subtasks")
+            .get();
+
+        List<Map<String, dynamic>> subtasks = [];
+        for (var subtaskDoc in subtasksSnapshot.docs) {
+          var subtaskData = subtaskDoc.data();
+
+          // Convert subtask fields (e.g., deadline) if necessary
+          if (subtaskData['deadline'] is Timestamp) {
+            subtaskData['deadline'] =
+                (subtaskData['deadline'] as Timestamp).toDate();
           }
-        }).toList();
+
+          // Add subtask to the list
+          subtasks.add(Map<String, dynamic>.from(subtaskData));
+        }
+
+        // Merge goal data with the fetched subtasks
+        data['subtasks'] = subtasks;
+
+        // Convert the deadline to DateTime if it's a Timestamp in the goal document
+        if (data['deadline'] is Timestamp) {
+          data['deadline'] = (data['deadline'] as Timestamp).toDate();
+        }
+
+        // Add the goal to the list
+        goals.add(Map<String, dynamic>.from(data));
       }
 
-      // Ensure the data is a Map<String, dynamic>
-      goals.add(Map<String, dynamic>.from(data));
+      return goals;
+    } catch (e) {
+      print("Exception: $e");
+      return [];
     }
-    return goals; // Returns a list of goal data
-  } catch (e) {
-    print("Exception: $e");
-    return []; // Returns an empty list if there's an error
   }
-}
+
+  Future<List<Map<String, dynamic>>> getUncheckedGoals() async {
+    try {
+      var snapshot = await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .where("isChecked", isEqualTo: false)
+          .get();
+
+      List<Map<String, dynamic>> uncheckedGoals = [];
+      for (var doc in snapshot.docs) {
+        var data = doc.data();
+
+        if (data['deadline'] is Timestamp) {
+          data['deadline'] = (data['deadline'] as Timestamp).toDate();
+        }
+
+        uncheckedGoals.add({
+          "title": data["title"] ?? "",
+          "deadline": data["deadline"] ?? null,
+          "weight": data["wieght"],
+        });
+      }
+      return uncheckedGoals;
+    } catch (e) {
+      print("Exception: $e");
+      return [];
+    }
+  }
 }

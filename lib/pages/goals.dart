@@ -6,7 +6,6 @@ import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/const/messages.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
   final String title;
@@ -35,27 +34,12 @@ class _GoalsState extends State<Goals> {
 Future<void> _fetchGoals() async {
   try {
     // Fetch goals from Firestore
-    goals = await FirestoreDataSource().getAllGoals();
-
-    // Convert Timestamp fields to DateTime
-    for (var goal in goals) {
-      // Convert the 'deadline' of the goal (if it's a Timestamp)
-      if (goal['deadline'] is Timestamp) {
-        goal['deadline'] = (goal['deadline'] as Timestamp).toDate();
-      }
-
-      // Convert the 'deadline' of each subtask (if it's a Timestamp)
-      if (goal['subtasks'] != null) {
-        for (var subtask in goal['subtasks']) {
-          if (subtask['deadline'] is Timestamp) {
-            subtask['deadline'] = (subtask['deadline'] as Timestamp).toDate();
-          }
-        }
-      }
-    }
+    List<Map<String, dynamic>> fetched_goals = await FirestoreDataSource().getAllGoals();
 
     // Set the goals list in the state
-    setState(() {});
+    setState(() {
+      goals = fetched_goals;
+    });
   } catch (e) {
     print("Error fetching goals: $e");
   }
@@ -73,7 +57,7 @@ Future<void> _fetchGoals() async {
 
     // Update Firestore
     try {
-      await _firestoreDataSource.update_goal(
+      await _firestoreDataSource.updateGoal(
         goal['id'],
         goal['subtasks'],
         goal['isChecked'],

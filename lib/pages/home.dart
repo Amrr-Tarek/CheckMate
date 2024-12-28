@@ -1,11 +1,11 @@
 import 'package:checkmate/controllers/firestore_controller.dart';
+import 'package:checkmate/controllers/goal_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 // import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/models/drawer.dart';
-import 'package:checkmate/models/tasks_home.dart';
-
+import 'package:checkmate/const/messages.dart';
 class HomePage extends StatefulWidget {
   final String title = "Home";
 
@@ -16,126 +16,164 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // add sth
-  int _currentIndex = 0;
+  List<Map<String, dynamic>> goals = [];
+  bool isLoading = true;
 
-  List<TaskModel> tasks = [];
-  // final List _pages = ['/home', '/routine', '/goals', '/myprofile'];
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
-  void fetchData() {
-    tasks = TaskModel.getTasks();
+  void fetchData() async {
+    try {
+      // Fetch goals data
+      List<Map<String, dynamic>> fetchedGoals = await FirestoreDataSource().getUncheckedGoals();
+      setState(() {
+        goals = fetchedGoals;
+        isLoading = false;
+      });
+    } catch (e) {
+      // Handle any errors here if needed
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Is ran everytime setState is called
-    fetchData();
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),
       drawer: MyDrawer.createDrawer(context, "dashboard"),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _nameXP(),
-            _graph(),
-            SizedBox(height: 10),
-            _tasks(),
-          ],
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  _nameXP(),
+                  _graph(),
+                  SizedBox(height: 10),
+                  _goals(),
+                ],
+              ),
+            ),
+      // Uncomment and implement the bottomNavigationBar if needed
+      // bottomNavigationBar: myBottomNavBar(),
+    );
+  }
+
+Column _goals() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          "My Goals",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textColor,
+          ),
         ),
       ),
-      // bottomNavigationBar: myBottomNavBar(), // Non-functional
-    );
-  }
+      goals.isEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "All caught up!",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textColor,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    Messages.NoUnCheckedGoals,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : ListView.separated(
+              itemCount: goals.length,
+              separatorBuilder: (context, index) => SizedBox(height: 10),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final goal = goals[index];
+                final title = goal['title'] ?? "Untitled";
+                final deadline = goal['deadline'] != null
+                    ? (goal['deadline'] as DateTime).toLocal()
+                    : null;
+                final weight = goal['weight'] ?? 1; // Default to 1 if weight is not available
+                final weightLabel = GoalController().getWeightLabel(weight);
 
-  BottomNavigationBar myBottomNavBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      fixedColor: Colors.black,
-      backgroundColor: AppColors.barColor,
-      currentIndex: _currentIndex,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(
-            _currentIndex == 0 ? Icons.home : Icons.home_outlined,
-            color: Colors.black,
-          ),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            _currentIndex == 1 ? Icons.repeat_on : Icons.repeat_outlined,
-            color: Colors.black,
-          ),
-          label: 'Routine',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            _currentIndex == 2 ? Icons.album : Icons.album_outlined,
-            color: Colors.black,
-          ),
-          label: 'Goals',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            _currentIndex == 3 ? Icons.person : Icons.person_outlined,
-            color: Colors.black,
-          ),
-          label: 'Profile',
-        ),
-      ],
-    );
-  }
-
-  Column _tasks() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            "My Tasks",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: AppColors.textColor, width: 1),
+                  ),
+                  elevation: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        if (deadline != null)
+                          Text(
+                            "Deadline: ${deadline.toString().split(' ')[0]}",
+                            style: TextStyle(fontSize: 14, color: AppColors.textColor),
+                          ),
+                        Text(
+                          "Weight: $weightLabel",
+                          style: TextStyle(fontSize: 14, color: AppColors.textColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-          ),
-        ),
-        SizedBox(height: 6),
-        // Use the ListView inside the column without Expanded
-        ListView.separated(
-          itemCount: tasks.length,
-          separatorBuilder: (context, index) => SizedBox(height: 5),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          physics:
-              NeverScrollableScrollPhysics(), // Disable scrolling within this ListView
-          itemBuilder: (context, index) => Padding(
-            padding: EdgeInsets.all(10),
-            child: Text(
-              tasks[index].taskName,
-              style: TextStyle(fontSize: 18, color: tasks[index].color),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+    ],
+  );
+}
 
   Container _graph() {
     return Container(
       color: Colors.red,
       height: 200,
       child: Center(
-          child: Text("Visual Graph here",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30))),
+        child: Text(
+          "Visual Graph here",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+          ),
+        ),
+      ),
     );
   }
 
@@ -147,25 +185,23 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // User's Name
           FutureBuilder<String>(
             future: FirestoreDataSource().getName(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator(); // Show loading indicator
+                return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}'); // Handle error
+                return Text('Error: ${snapshot.error}');
               } else if (snapshot.hasData && snapshot.data != "FAIL") {
                 return Text(
-                  snapshot.data!, // Display the name
+                  snapshot.data!,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 );
               } else {
-                return const Text(
-                    'Failed to load name'); // Handle "FAIL" or no data
+                return const Text('Failed to load name');
               }
             },
           ),
@@ -180,46 +216,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  // Container __body() {
-  //   return Container(
-  //     margin: const EdgeInsets.all(10),
-  //     child: Center(
-  //         child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         const Text(
-  //           "Hello :)\nThis Page is 'Getting Started' for you to implement the front end of the pages listed in the buttons below\nPress on the button to take you to the page (crazy right?!)\nادعيلي (معرفش ليه بس اخوك محتاج الدعوة)",
-  //           style: TextStyle(fontSize: 20),
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         const SizedBox(height: 10),
-  //         Button(
-  //             text: "Calendar",
-  //             onPress: () {
-  //               navigate(context, '/calendar');
-  //             }),
-  //         Button(
-  //             text: "Routine",
-  //             onPress: () {
-  //               navigate(context, '/routine');
-  //             }),
-  //         Button(
-  //             text: "Goals",
-  //             onPress: () {
-  //               navigate(context, '/goals');
-  //             }),
-  //         Button(
-  //             text: "My Profile",
-  //             onPress: () {
-  //               navigate(context, '/myprofile');
-  //             }),
-  //         Button(
-  //             text: "Settings",
-  //             onPress: () {
-  //               navigate(context, "/settings");
-  //             }),
-  //       ],
-  //     )),
-  //   );
-  // }
 }
