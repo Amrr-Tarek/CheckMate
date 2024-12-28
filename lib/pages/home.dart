@@ -10,7 +10,6 @@ import 'package:checkmate/models/tasks_home.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  
   final String title = "Home";
 
   const HomePage({super.key});
@@ -29,6 +28,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     fetchData();
   }
+
   void fetchData() {
     tasks = TaskModel.getTasks();
   }
@@ -144,141 +144,144 @@ class _HomePageState extends State<HomePage> {
   }
 
   Container _graph(LineData data) {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-    height: 200,
-    decoration: BoxDecoration(
-      color: Theme.of(context).primaryColor,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Theme.of(context).shadowColor.withOpacity(0.1),
-          blurRadius: 8,
-          offset: Offset(0, 4),
-        ),
-      ],
-    ),
-    child: data.spots.isEmpty // Check if the data is empty
-        ? Center(
-            child: Text(
-              "Visual Graph here",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      height: 200,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: data.spots.isEmpty // Check if the data is empty
+          ? Center(
+              child: Text(
+                "Visual Graph here",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
+              ),
+            )
+          : Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Your Progress',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  AspectRatio(
+                    aspectRatio: 16 / 6,
+                    child: LineChart(
+                      LineChartData(
+                        backgroundColor:
+                            const Color(0xFFF0F0F0), // Light grey background
+                        lineTouchData: LineTouchData(
+                          handleBuiltInTouches: true,
+                        ),
+                        gridData: FlGridData(
+                          show: false,
+                        ),
+                        titlesData: FlTitlesData(
+                          rightTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                          // Left titles of the graph
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                return data.leftTitle[value.toInt()] != null
+                                    ? Text(
+                                        data.leftTitle[value.toInt()]
+                                            .toString(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              },
+                              interval: 1,
+                              reservedSize: 24,
+                            ),
+                          ),
+                          // Bottom titles of the graph
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                return data.bottomTitle[value.toInt()] != null
+                                    ? Text(
+                                        data.bottomTitle[value.toInt()]
+                                            .toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              },
+                              interval: 1,
+                              reservedSize: 24,
+                            ),
+                          ),
+                        ),
+                        borderData: FlBorderData(
+                          show: true,
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 37, 34, 97),
+                            width: 1,
+                          ),
+                        ),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: data.spots,
+                            dotData: FlDotData(show: false),
+                            show: true,
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.blue, Colors.purple],
+                            ),
+                            color: const Color.fromARGB(255, 24, 121, 102),
+                            belowBarData: BarAreaData(show: false),
+                          ),
+                        ],
+                        minX: 0,
+                        maxX: 120,
+                        minY: 0,
+                        maxY: 100,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          )
-        : Padding(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'Your Progress',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                AspectRatio(
-                  aspectRatio: 16 / 6,
-                  child: LineChart(
-                    LineChartData(
-                      backgroundColor: const Color(0xFFF0F0F0), // Light grey background
-                      lineTouchData: LineTouchData(
-                        handleBuiltInTouches: true,
-                      ),
-                      gridData: FlGridData(
-                        show: false,
-                      ),
-                      titlesData: FlTitlesData(
-                        rightTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: false,
-                          ),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: false,
-                          ),
-                        ),
-                        // Left titles of the graph
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (double value, TitleMeta meta) {
-                              return data.leftTitle[value.toInt()] != null
-                                  ? Text(
-                                      data.leftTitle[value.toInt()].toString(),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.withOpacity(0.5),
-                                      ),
-                                    )
-                                  : const SizedBox();
-                            },
-                            interval: 1,
-                            reservedSize: 24,
-                          ),
-                        ),
-                        // Bottom titles of the graph
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (double value, TitleMeta meta) {
-                              return data.bottomTitle[value.toInt()] != null
-                                  ? Text(
-                                      data.bottomTitle[value.toInt()].toString(),
-                                      style: TextStyle(
-                                        color: Colors.grey.withOpacity(0.5),
-                                      ),
-                                    )
-                                  : const SizedBox();
-                            },
-                            interval: 1,
-                            reservedSize: 24,
-                          ),
-                        ),
-                      ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 37, 34, 97),
-                          width: 1,
-                        ),
-                      ),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: data.spots,
-                          dotData: FlDotData(show: false),
-                          show: true,
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.blue, Colors.purple],
-                          ),
-                          color: const Color.fromARGB(255, 24, 121, 102),
-                          belowBarData: BarAreaData(show: false),
-                        ),
-                      ],
-                      minX: 0,
-                      maxX: 120,
-                      minY: 0,
-                      maxY: 100,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-  );
-}
-
+    );
+  }
 
   Container _nameXP(String name, int xp) {
     return Container(
