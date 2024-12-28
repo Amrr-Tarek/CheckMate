@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Is ran everytime setState is called
-    UserProvider userProvider = Provider.of<UserProvider>(context);
-    UserModel user = userProvider.user;
+    UserModel user = context.watch<UserProvider>().user;
+
     fetchData();
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),

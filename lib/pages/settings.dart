@@ -24,10 +24,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of<UserProvider>(context);
-    UserModel user = userProvider.user;
-
-    print("Primary Color: ${Theme.of(context).primaryColor}");
+    UserModel user = context.watch<UserProvider>().user;
 
     return Scaffold(
       appBar: appBar(context, "Settings"),

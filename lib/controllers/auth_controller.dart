@@ -49,8 +49,7 @@ class AuthController {
         password: password,
       );
       String uid = _auth.currentUser!.uid;
-      await Provider.of<UserProvider>(context, listen: false)
-          .fetchUserData(uid);
+      context.read<UserProvider>().fetchUserData(uid);
       Navigator.pushReplacementNamed(context, "/home");
     } on FirebaseAuthException catch (e) {
       _handleAuthError(e);
