@@ -90,7 +90,6 @@ class _MyProfileState extends State<MyProfile> {
   Container __nameLogo(String name, int xp) {
     return Container(
       padding: const EdgeInsets.all(20),
-      color: Colors.amber,
       height: 140,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,7 +145,7 @@ class _InsightCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 5),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(

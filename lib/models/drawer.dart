@@ -98,7 +98,7 @@ class DrawerMenuButtons extends StatelessWidget {
                   child: Icon(
                     icon,
                     size: 22,
-                    color: Colors.black,
+                    color: Theme.of(context).shadowColor,
                   ),
                 ),
                 Expanded(

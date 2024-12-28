@@ -13,6 +13,7 @@ import 'package:checkmate/pages/settings.dart';
 import 'package:checkmate/firebase_options.dart';
 import 'package:provider/provider.dart';
 
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,22 +34,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // initialRoute: '/home',
-      debugShowCheckedModeBanner: false,
-      home: const LoadingScreen(),
-      routes: {
-        '/loading': (context) => const LoadingScreen(),
-        '/signup': (context) => const SignUpPage(),
-        '/login': (context) => const LoginScreen(),
-        '/home': (context) => const HomePage(),
-        '/calendar': (context) => const Calendar(),
-        '/routine': (context) => const RoutinePage(),
-        '/goals': (context) => const Goals(),
-        '/myprofile': (context) => const MyProfile(),
-        '/settings': (context) => const Settings(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, mode, __) {
+        return MaterialApp(
+          // initialRoute: '/home',
+          debugShowCheckedModeBanner: false,
+          home: const LoadingScreen(),
+          routes: {
+            '/loading': (context) => const LoadingScreen(),
+            '/signup': (context) => const SignUpPage(),
+            '/login': (context) => const LoginScreen(),
+            '/home': (context) => const HomePage(),
+            '/calendar': (context) => const Calendar(),
+            '/routine': (context) => const RoutinePage(),
+            '/goals': (context) => const Goals(),
+            '/myprofile': (context) => const MyProfile(),
+            '/settings': (context) => const Settings(),
+          },
+          theme: ThemeData(
+            fontFamily: "Cairo",
+            brightness: Brightness.light,
+            primaryColor: const Color(0xFF6750a4),
+            shadowColor: const Color(0xFF000000),
+            cardColor: const Color(0xFFFFFFFF),
+            secondaryHeaderColor: const Color(0xFFB9A3F4),
+          ),
+          darkTheme: ThemeData(
+            fontFamily: "Cairo",
+            brightness: Brightness.dark,
+            primaryColor: const Color(0xFF6750a4),
+            shadowColor: const Color(0xFFFFFFFF),
+            cardColor: const Color.fromARGB(255, 60, 4, 142),
+            secondaryHeaderColor: const Color.fromARGB(255, 88, 55, 178),
+          ),
+          themeMode: mode,
+        );
       },
-      theme: ThemeData(fontFamily: "Cairo"),
     );
   }
 }

@@ -7,7 +7,7 @@ AppBar appBar(BuildContext context, final String title,
   return AppBar(
     shadowColor: Colors.black,
     elevation: 6,
-    backgroundColor: AppColors.barColor,
+    backgroundColor: Theme.of(context).secondaryHeaderColor,
     title: Text(title,
         style: const TextStyle(
           color: Color(0xFF1D1B20),

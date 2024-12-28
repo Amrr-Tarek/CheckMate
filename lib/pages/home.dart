@@ -146,7 +146,6 @@ class _HomePageState extends State<HomePage> {
   Container _nameXP(String name, int xp) {
     return Container(
       height: 80,
-      color: Colors.amber,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
