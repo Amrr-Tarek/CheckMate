@@ -26,4 +26,6 @@ class Messages {
   static const String invalid_deadline = "Invalid deadline format.";
   static const String subtask_deadline_before_goal_deadline =
       "Subtask's deadline must be before goal's deadline ";
+
+  static const String NoUnCheckedGoals = "You have no unchecked goals at the moment. Stay ahead with Checkmate and set new goals to keep achieving!";
 }
