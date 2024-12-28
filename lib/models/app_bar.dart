@@ -4,7 +4,7 @@ import 'package:checkmate/models/navigator.dart';
 AppBar appBar(BuildContext context, final String title,
     {bool showIcon = false}) {
   return AppBar(
-    shadowColor: Theme.of(context).primaryColor,
+    shadowColor: Theme.of(context).shadowColor,
     elevation: 6,
     backgroundColor: Theme.of(context).secondaryHeaderColor,
     title: Text(title,
