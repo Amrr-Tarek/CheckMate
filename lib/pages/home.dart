@@ -1,4 +1,7 @@
+import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/models/buttons.dart';
+import 'package:checkmate/models/display_info.dart';
 import 'package:checkmate/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -51,6 +54,27 @@ class _HomePageState extends State<HomePage> {
             _graph(data),
             SizedBox(height: 20),
             _tasks(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Button(
+                label: "Check if user is logged in",
+                onPressed: () async {
+                  // don't use auth controller here
+                  bool isLoggedIn = await AuthController().isUserLoggedIn();
+                  if (isLoggedIn) {
+                    showSnackBar(context, "User is logged in");
+                  } else {
+                    showSnackBar(context, "No user is logged in");
+                  }
+                },
+                backgroundColor: AppColors.boxColor,
+                textColor: AppColors.backgroundColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                borderRadius: 24.0,
+                height: 48.0,
+              ),
+            ),
           ],
         ),
       ),
