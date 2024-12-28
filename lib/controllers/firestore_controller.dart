@@ -7,8 +7,16 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 // ignore: depend_on_referenced_packages
 import 'package:checkmate/pages/calendar.dart';
+import 'calender_data.dart';
 
 /// This file contains the FirestoreDataSource class which is responsible for all the CRUD operations in the Firestore database.
+class EventData {
+  final String id;
+  final String title;
+  final DateTime day;
+
+  EventData ({required this.id, required this.title, required this.day});
+}
 
 class FirestoreDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -245,5 +253,70 @@ Future<void> deleteCalendarEvent(String eventId) async {
 //       print("Exception: $e");
 //     }
 // }
+
+
+// =========================================
+
+// Future<Map<String, List<Event>>> getCalendarEvents() async {
+//   try {
+//     final querySnapshot = await _firestore
+//         .collection('users')
+//         .doc(_auth.currentUser!.uid)
+//         .collection('calendar')
+//         .get();
+
+//     Map<String, List<Event>> eventsDB = {};
+//     for (var doc in querySnapshot.docs) {
+//       // CREATE EVENT OBJECT
+//       final event = Event(
+//         id: doc['id'],
+//         title: doc['event'],
+//         day: (doc['day'] as Timestamp).toDate(),
+//       );
+//       eventsDB[doc.id] = event as List<Event>;
+//       // );
+
+//       // final key = "${event.day.year}-${event.day.month}-${event.day.day}";
+//       // if (events.containsKey(key)) {
+//       //   events[key]!.add(event);
+//       // } else {
+//       //   events[key] = [event];
+//       // }
+//     }
+//     return eventsDB;
+//   } catch (e) {
+//     print("Exception: $e");
+//     return {};
+//   }
+// }
+Future<Map<String, EventData>> getCalendarEvents() async {
+  try {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .collection('calendar')
+        .get();
+
+    Map<String, EventData> eventsDB = {};
+    for (var doc in querySnapshot.docs) {
+      // CREATE EVENT OBJECT
+      final event = EventData(
+        id: doc['id'],
+        title: doc['event'],
+        day: (doc['day'] as Timestamp).toDate(),
+      );
+
+      // Use the document ID as the key
+      eventsDB[doc.id] = event;
+    }
+    return eventsDB;
+  } catch (e) {
+    print("Exception: $e");
+    return {};
+  }
 }
 
+
+// ==========================================================
+// Loading the data
+}
