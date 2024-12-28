@@ -1,6 +1,6 @@
 # CheckMate - A Flutter To-Do Application
 
-![CheckMate Logo](assets/app_icon.png) <!-- Add your logo image here -->
+<!--![CheckMate Logo](assets/app_icon.png) <!-- Add your logo image here -->-->
 
 ## Overview
 
