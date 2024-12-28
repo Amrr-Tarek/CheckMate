@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
@@ -21,6 +23,12 @@ class _SettingsState extends State<Settings> {
   bool notifEnabled = true;
   String? selectedLang = "English";
   bool sharingAllowed = true;
+
+  @override
+  void initState() {
+    super.initState();
+    isDarkMode = PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -314,8 +322,11 @@ class _SettingsState extends State<Settings> {
             valueListenable: themeNotifier,
             builder: (_, mode, __) {
               return Switch(
-                value: mode == ThemeMode.dark,
+                value: isDarkMode,
                 onChanged: (value) {
+                  setState(() {
+                    isDarkMode = value;
+                  },);
                   themeNotifier.value =
                       value ? ThemeMode.dark : ThemeMode.light;
                 },
