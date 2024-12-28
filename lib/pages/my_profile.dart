@@ -14,8 +14,7 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of<UserProvider>(context);
-    UserModel user = userProvider.user;
+    UserModel user = context.watch<UserProvider>().user;
 
     return Scaffold(
       // Page Front End - Everything down here is unnecessary

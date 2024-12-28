@@ -15,7 +15,7 @@ class EventData {
   final String title;
   final DateTime day;
 
-  EventData ({required this.id, required this.title, required this.day});
+  EventData({required this.id, required this.title, required this.day});
 }
 
 class FirestoreDataSource {
@@ -71,11 +71,11 @@ class FirestoreDataSource {
           .doc(_auth.currentUser!.uid)
           .get();
       if (userDoc.exists) {
-        Provider.of<UserProvider>(context, listen: false).setUser(UserModel(
-          name: userDoc.data()!["name"],
-          email: userDoc.data()!["email"],
-          xp: userDoc.data()!["xp"],
-        ));
+        context.read<UserProvider>().setUser(UserModel(
+              name: userDoc.data()!["name"],
+              email: userDoc.data()!["email"],
+              xp: userDoc.data()!["xp"],
+            ));
       }
     } catch (e) {
       print("Error updating name: $e");
@@ -114,6 +114,7 @@ class FirestoreDataSource {
     String docId = Uuid().v4();
     return docId;
   }
+
   Future<void> addCalendarEvent(String eventName, DateTime eventDay) async {
     try {
       // i
@@ -124,7 +125,7 @@ class FirestoreDataSource {
           .collection('calendar')
           .doc(docId)
           .set({
-            'id': docId,
+        'id': docId,
         'event': eventName,
         'day': eventDay,
       });
@@ -154,26 +155,26 @@ class FirestoreDataSource {
   // }
   // ------------------------------------------------------------------------
   Future<String?> getDocId(String eventName, DateTime eventDay) async {
-  try {
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(_auth.currentUser!.uid)
-        .collection('calendar')
-        .where('event', isEqualTo: eventName)
-        .where('day', isEqualTo: eventDay)
-        .get();
+    try {
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('calendar')
+          .where('event', isEqualTo: eventName)
+          .where('day', isEqualTo: eventDay)
+          .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs[0].id;
-    } else {
-      print("No document found for the given event and day.");
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs[0].id;
+      } else {
+        print("No document found for the given event and day.");
+        return null;
+      }
+    } catch (e) {
+      print("Couldn't resolve document ID: $e");
       return null;
     }
-  } catch (e) {
-    print("Couldn't resolve document ID: $e");
-    return null;
   }
-}
 
   // delete event from the calendar
   // Future<void> deleteCalendarEvent(String id) async {
@@ -205,7 +206,7 @@ class FirestoreDataSource {
 //             doc.reference.delete();
 //           }
 //         });
-        
+
 //     // final querySnapshot = await collectionRef.get();
 //     // for (var doc in querySnapshot.docs) {
 //     //   // if (doc.id == docSnapShot.docs[0].id) {
@@ -219,25 +220,24 @@ class FirestoreDataSource {
 //   }
 // }
 
-
-Future<void> deleteCalendarEvent(String eventId) async {
-  try {
-    await _firestore
-        .collection('users')
-        .doc(_auth.currentUser!.uid)
-        .collection('calendar')
-        .doc(eventId)
-        .delete();
-    print("Event with ID $eventId deleted successfully.");
-  } catch (e) {
-    print("Exception: $e");
+  Future<void> deleteCalendarEvent(String eventId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('calendar')
+          .doc(eventId)
+          .delete();
+      print("Event with ID $eventId deleted successfully.");
+    } catch (e) {
+      print("Exception: $e");
+    }
   }
-}
 
 // ==============================================================
 // Future<void> addGoals(String eventName, DateTime eventDay) async {
 //     try {
-      
+
 //       String docId = createDocId();
 //       await _firestore
 //           .collection('users')
@@ -253,7 +253,6 @@ Future<void> deleteCalendarEvent(String eventId) async {
 //       print("Exception: $e");
 //     }
 // }
-
 
 // =========================================
 
@@ -289,33 +288,32 @@ Future<void> deleteCalendarEvent(String eventId) async {
 //     return {};
 //   }
 // }
-Future<Map<String, EventData>> getCalendarEvents() async {
-  try {
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(_auth.currentUser!.uid)
-        .collection('calendar')
-        .get();
+  Future<Map<String, EventData>> getCalendarEvents() async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('calendar')
+          .get();
 
-    Map<String, EventData> eventsDB = {};
-    for (var doc in querySnapshot.docs) {
-      // CREATE EVENT OBJECT
-      final event = EventData(
-        id: doc['id'],
-        title: doc['event'],
-        day: (doc['day'] as Timestamp).toDate(),
-      );
+      Map<String, EventData> eventsDB = {};
+      for (var doc in querySnapshot.docs) {
+        // CREATE EVENT OBJECT
+        final event = EventData(
+          id: doc['id'],
+          title: doc['event'],
+          day: (doc['day'] as Timestamp).toDate(),
+        );
 
-      // Use the document ID as the key
-      eventsDB[doc.id] = event;
+        // Use the document ID as the key
+        eventsDB[doc.id] = event;
+      }
+      return eventsDB;
+    } catch (e) {
+      print("Exception: $e");
+      return {};
     }
-    return eventsDB;
-  } catch (e) {
-    print("Exception: $e");
-    return {};
   }
-}
-
 
 // ==========================================================
 // Loading the data

@@ -2,7 +2,6 @@ import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
-// import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/models/drawer.dart';
 import 'package:checkmate/models/tasks_home.dart';
@@ -18,11 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // add sth
   int _currentIndex = 0;
 
   List<TaskModel> tasks = [];
-  // final List _pages = ['/home', '/routine', '/goals', '/myprofile'];
 
   void fetchData() {
     tasks = TaskModel.getTasks();
@@ -30,9 +27,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Is ran everytime setState is called
-    UserProvider userProvider = Provider.of<UserProvider>(context);
-    UserModel user = userProvider.user;
+    UserModel user = context.watch<UserProvider>().user;
+
     fetchData();
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),
@@ -42,12 +38,12 @@ class _HomePageState extends State<HomePage> {
           children: [
             _nameXP(user.name, user.xp),
             _graph(),
-            SizedBox(height: 10),
+            SizedBox(height: 20),  // Increased spacing
             _tasks(),
           ],
         ),
       ),
-      // bottomNavigationBar: myBottomNavBar(), // Non-functional
+      // bottomNavigationBar: myBottomNavBar(),
     );
   }
 
@@ -60,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         });
       },
       fixedColor: Colors.black,
-      backgroundColor: AppColors.barColor,
+      backgroundColor: Theme.of(context).primaryColor,  // Use primaryColor from the theme
       currentIndex: _currentIndex,
       items: [
         BottomNavigationBarItem(
@@ -95,34 +91,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Enhanced styling for tasks
   Column _tasks() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(16),
           child: Text(
             "My Tasks",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: Theme.of(context).secondaryHeaderColor,  // Use secondaryHeaderColor
             ),
           ),
         ),
-        SizedBox(height: 6),
-        // Use the ListView inside the column without Expanded
         ListView.separated(
           itemCount: tasks.length,
-          separatorBuilder: (context, index) => SizedBox(height: 5),
+          separatorBuilder: (context, index) => SizedBox(height: 10),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          physics:
-              NeverScrollableScrollPhysics(), // Disable scrolling within this ListView
-          itemBuilder: (context, index) => Padding(
-            padding: EdgeInsets.all(10),
-            child: Text(
-              tasks[index].taskName,
-              style: TextStyle(fontSize: 18, color: tasks[index].color),
+          physics: NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) => Card(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: AppColors.borderColor, width: 1),
+            ),
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                tasks[index].taskName,
+                style: TextStyle(fontSize: 18, color: tasks[index].color),
+              ),
             ),
           ),
         ),
@@ -132,83 +135,67 @@ class _HomePageState extends State<HomePage> {
 
   Container _graph() {
     return Container(
-      color: Colors.red,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       height: 200,
-      child: Center(
-          child: Text("Visual Graph here",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30))),
-    );
-  }
-
-  Container _nameXP(String name, int xp) {
-    return Container(
-      height: 80,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          // User's Name
-          Text(
-            name, // Display the name
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,  // Use primaryColor for the graph container
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),  // Shadow color from the theme
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
-          Text(
-            "$xp XP",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          )
         ],
+      ),
+      child: Center(
+        child: Text(
+          "Visual Graph here",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+          ),
+        ),
       ),
     );
   }
-  // Container __body() {
-  //   return Container(
-  //     margin: const EdgeInsets.all(10),
-  //     child: Center(
-  //         child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         const Text(
-  //           "Hello :)\nThis Page is 'Getting Started' for you to implement the front end of the pages listed in the buttons below\nPress on the button to take you to the page (crazy right?!)\nادعيلي (معرفش ليه بس اخوك محتاج الدعوة)",
-  //           style: TextStyle(fontSize: 20),
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         const SizedBox(height: 10),
-  //         Button(
-  //             text: "Calendar",
-  //             onPress: () {
-  //               navigate(context, '/calendar');
-  //             }),
-  //         Button(
-  //             text: "Routine",
-  //             onPress: () {
-  //               navigate(context, '/routine');
-  //             }),
-  //         Button(
-  //             text: "Goals",
-  //             onPress: () {
-  //               navigate(context, '/goals');
-  //             }),
-  //         Button(
-  //             text: "My Profile",
-  //             onPress: () {
-  //               navigate(context, '/myprofile');
-  //             }),
-  //         Button(
-  //             text: "Settings",
-  //             onPress: () {
-  //               navigate(context, "/settings");
-  //             }),
-  //       ],
-  //     )),
-  //   );
-  // }
+
+  // Enhanced styling for name and XP
+  Container _nameXP(String name, int xp) {
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor.withOpacity(0.8),  // Use primaryColor for the background
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              "$xp XP",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
