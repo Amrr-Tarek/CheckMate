@@ -1,6 +1,7 @@
 import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/main.dart';
 import 'package:checkmate/models/toast.dart';
 import 'package:checkmate/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,8 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
     UserModel user = userProvider.user;
+
+    print("Primary Color: ${Theme.of(context).primaryColor}");
 
     return Scaffold(
       appBar: appBar(context, "Settings"),
@@ -156,12 +159,14 @@ class _SettingsState extends State<Settings> {
                                 onPressed: () async {
                                   if (_nameController.text.isNotEmpty) {
                                     // Update the name in the database
-                                    await FirestoreDataSource()
-                                        .updateName(_nameController.text.trim(), context);
-                                        showToast("Name updated successfully", Colors.blue);
+                                    await FirestoreDataSource().updateName(
+                                        _nameController.text.trim(), context);
+                                    showToast("Name updated successfully",
+                                        Colors.blue);
                                     Navigator.pop(context);
                                   } else {
-                                    showToast("Name cannot be empty", Colors.red);
+                                    showToast(
+                                        "Name cannot be empty", Colors.red);
                                   }
                                 },
                                 child: const Text("Save"),
@@ -308,12 +313,14 @@ class _SettingsState extends State<Settings> {
           leading: Icons.color_lens_outlined,
           title: "App Theme",
           subtitle: "Light/Dark mode",
-          trailing: Switch(
-            value: isDarkMode,
-            onChanged: (value) {
-              setState(
-                () {
-                  isDarkMode = value;
+          trailing: ValueListenableBuilder(
+            valueListenable: themeNotifier,
+            builder: (_, mode, __) {
+              return Switch(
+                value: mode == ThemeMode.dark,
+                onChanged: (value) {
+                  themeNotifier.value =
+                      value ? ThemeMode.dark : ThemeMode.light;
                 },
               );
             },
