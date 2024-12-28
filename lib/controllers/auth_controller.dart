@@ -1,3 +1,4 @@
+import 'package:checkmate/controllers/calendar_provider.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/toast.dart';
@@ -97,10 +98,12 @@ class AuthController {
   }
 
   /// Signs out the currently signed-in user.
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     try {
       await _auth.signOut();
       await GoogleSignIn().signOut();
+
+      context.read<CalendarProvider>().clearProvider();
       showToast("Successfully signed out.", Colors.green);
     } catch (e) {
       print("Error signing out: $e");

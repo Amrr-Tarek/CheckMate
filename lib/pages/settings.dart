@@ -230,8 +230,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        await AuthController().signOut();
-                        AuthController().signOut();
+                        await AuthController().signOut(context);
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           "/login",
                           (Route<dynamic> route) =>
