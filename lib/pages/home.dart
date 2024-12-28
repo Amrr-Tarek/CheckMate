@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             _nameXP(user.name, user.xp),
             _graph(),
-            SizedBox(height: 20),  // Increased spacing
+            SizedBox(height: 20),
             _tasks(),
           ],
         ),
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         });
       },
       fixedColor: Colors.black,
-      backgroundColor: Theme.of(context).primaryColor,  // Use primaryColor from the theme
+      backgroundColor: Theme.of(context).primaryColor,
       currentIndex: _currentIndex,
       items: [
         BottomNavigationBarItem(
@@ -91,7 +91,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Enhanced styling for tasks
   Column _tasks() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +102,7 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).secondaryHeaderColor,  // Use secondaryHeaderColor
+              color: Theme.of(context).secondaryHeaderColor,
             ),
           ),
         ),
@@ -138,11 +137,11 @@ class _HomePageState extends State<HomePage> {
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       height: 200,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,  // Use primaryColor for the graph container
+        color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),  // Shadow color from the theme
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: Offset(0, 4),
           ),
@@ -161,12 +160,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Enhanced styling for name and XP
   Container _nameXP(String name, int xp) {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.8),  // Use primaryColor for the background
+        color: Theme.of(context).primaryColor.withOpacity(0.8),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(16),
           bottomRight: Radius.circular(16),
