@@ -1,11 +1,10 @@
-import 'package:checkmate/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/navigator.dart';
 
 AppBar appBar(BuildContext context, final String title,
     {bool showIcon = false}) {
   return AppBar(
-    shadowColor: Colors.black,
+    shadowColor: Theme.of(context).primaryColor,
     elevation: 6,
     backgroundColor: Theme.of(context).secondaryHeaderColor,
     title: Text(title,

@@ -39,4 +39,4 @@ After we finish:
 
 - [ ] Making the app theme convenient with the idea
 
-- [ ] Add dark mode
+- [x] Add dark mode
