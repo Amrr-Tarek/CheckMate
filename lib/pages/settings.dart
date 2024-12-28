@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
