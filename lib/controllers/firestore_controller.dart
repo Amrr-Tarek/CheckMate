@@ -177,50 +177,6 @@ class FirestoreDataSource {
     }
   }
 
-  // delete event from the calendar
-  // Future<void> deleteCalendarEvent(String id) async {
-  //   try {
-  //     // print(id);
-  //     await final collectionRef _firestore
-  //         .collection('users')
-  //         .doc(_auth.currentUser!.uid)
-  //         .collection('calendar');
-  //         final querySnapshot = await collectionRef.get();
-  //   for (var doc in querySnapshot.docs) {
-  //     await doc.reference.delete();
-  //   }
-  //   print("All calendar events deleted successfully.");
-  //   } catch (e) {
-  //     print("Exception: $e");
-  //   }
-  // }
-//   Future<void> deleteAllCalendarEvents(String id) async {
-//   try {
-//     await _firestore
-//         .collection('users')
-//         .doc(_auth.currentUser!.uid)
-//         .collection('calendar')
-//         .where('id', isEqualTo: id)
-//         .get()
-//         .then((querySnapshot) {
-//           for (var doc in querySnapshot.docs) {
-//             doc.reference.delete();
-//           }
-//         });
-
-//     // final querySnapshot = await collectionRef.get();
-//     // for (var doc in querySnapshot.docs) {
-//     //   // if (doc.id == docSnapShot.docs[0].id) {
-//     //   //   continue;
-//     //   // }
-//     //   await doc.reference.delete();
-//     // }
-//     print("All calendar events deleted successfully.");
-//   } catch (e) {
-//     print("Exception: $e");
-//   }
-// }
-
   Future<void> deleteCalendarEvent(String eventId) async {
     try {
       await _firestore

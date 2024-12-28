@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         // need to add the id
-        // ChangeNotifierProvider(create: (context) => CalendarProvider(eventName: "no events today", eventDate: DateTime.now())),
         ChangeNotifierProvider(create: (_) => CalendarProvider()),
       ],
       child: ValueListenableBuilder<ThemeMode>(

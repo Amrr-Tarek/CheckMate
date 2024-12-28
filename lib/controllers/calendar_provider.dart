@@ -1,27 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'firestore_controller.dart';
-
-// class CalendarProvider extends ChangeNotifier {
-//   String? _eventName;
-//   final String id;
-
-//   CalendarProvider({required this.id});
-
-//   String? get eventName => _eventName;
-
-//   Future<void> fetchEventById() async {
-//     try {
-//       _eventName = await FirestoreDataSource().getEventById(id);
-//       notifyListeners();
-//     } catch (e) {
-//       print("Error fetching event: $e");
-//     }
-//   }
-// }
-// =================================================================================================
-
-
 import 'package:checkmate/models/calendar_model.dart';
 import 'package:flutter/material.dart';
 import 'firestore_controller.dart';
