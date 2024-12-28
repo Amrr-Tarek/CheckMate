@@ -1,3 +1,4 @@
+import 'package:checkmate/models/display_info.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/const/shapes.dart';
@@ -133,6 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 value: _rememberMe,
                                 onChanged: (value) {
                                   setState(() {
+                                    // ---------------> rember me logic <------------------------
                                     _rememberMe = value!;
                                   });
                                 },
@@ -145,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              // ---------------> rember me logic <------------------------
+                              Navigator.pushNamed(context, "/reset");
                             },
                             child: const Text(
                               "Forgot Password?",
@@ -169,6 +171,28 @@ class _LoginScreenState extends State<LoginScreen> {
                               context: context,
                             );
                             // navigate(context, "/home");
+                          },
+                          backgroundColor: AppColors.boxColor,
+                          textColor: AppColors.backgroundColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          borderRadius: 24.0,
+                          height: 48.0,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Button(
+                          label: "Check if user is logged in",
+                          onPressed: () async {
+                            // don't use auth controller here
+                            bool isLoggedIn =
+                                await AuthController().isUserLoggedIn();
+                            if (isLoggedIn) {
+                              showSnackBar(context, "User is logged in");
+                            } else {
+                              showSnackBar(context, "No user is logged in");
+                            }
                           },
                           backgroundColor: AppColors.boxColor,
                           textColor: AppColors.backgroundColor,

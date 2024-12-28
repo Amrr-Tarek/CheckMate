@@ -1,15 +1,15 @@
 import 'dart:ui';
-
 import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/main.dart';
-import 'package:checkmate/models/toast.dart';
+import 'package:checkmate/models/display_info.dart';
 import 'package:checkmate/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/app_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -27,7 +27,8 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    isDarkMode = PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+    isDarkMode =
+        PlatformDispatcher.instance.platformBrightness == Brightness.dark;
   }
 
   @override
@@ -72,16 +73,26 @@ class _SettingsState extends State<Settings> {
         _buildSettingTile(
           leading: Icons.feedback_outlined,
           title: "Support / Feedback",
-          onTap: () {},
+          onTap: () async {
+            await _launchUrl(Uri.parse("https://example.com"));
+          },
         ),
         _buildSettingTile(
           leading: Icons.open_in_new_sharp,
           title: "Credits",
           subtitle: "Redirect to the authors page of the application",
-          onTap: () {},
+          onTap: () async {
+            await _launchUrl(Uri.parse("https://example.com"));
+          },
         )
       ],
     );
+  }
+
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) {
+      showToast("Couldn't proceed with your request.", Colors.red);
+    }
   }
 
   Column __backup() {
@@ -194,7 +205,10 @@ class _SettingsState extends State<Settings> {
           title: "Security and Privacy",
           children: [
             _buildSettingTile(
-                title: "Reset your Password"), // Maybe Redirect to another page
+                title: "Reset your Password",
+                onTap: () {
+                  Navigator.of(context).pushNamed("/reset");
+                }), // Maybe Redirect to another page
             _buildSettingTile(
               title: "Allow data sharing",
               subtitle:
@@ -230,8 +244,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        await AuthController().signOut();
-                        AuthController().signOut();
+                        await AuthController().signOut(context);
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           "/login",
                           (Route<dynamic> route) =>
@@ -324,9 +337,11 @@ class _SettingsState extends State<Settings> {
               return Switch(
                 value: isDarkMode,
                 onChanged: (value) {
-                  setState(() {
-                    isDarkMode = value;
-                  },);
+                  setState(
+                    () {
+                      isDarkMode = value;
+                    },
+                  );
                   themeNotifier.value =
                       value ? ThemeMode.dark : ThemeMode.light;
                 },
@@ -380,7 +395,12 @@ class _SettingsState extends State<Settings> {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      leading: leading != null ? Icon(leading, size: 30) : null,
+      leading: leading != null
+          ? Icon(leading,
+              size: 30,
+              color:
+                  leading == Icons.delete_forever_outlined ? Colors.red : null)
+          : null,
       title: Text(
         title,
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),

@@ -23,7 +23,7 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    // this will make the app to fetch the events from the database and still exist while the navigation among the pages
+    // this will make the app to fetch the events from the database and still exist locally while the navigation among the pages
     // Fetch event data when the widget is initialized
     Provider.of<CalendarProvider>(context, listen: false).fetchEvents();
   }
@@ -85,8 +85,10 @@ class _CalendarState extends State<Calendar> {
                           title: _eventController.text,
                           day: _selectedDay,
                         );
-                        await FirestoreDataSource().addCalendarEvent(newEvent.title, newEvent.day);
-                        Provider.of<CalendarProvider>(context, listen: false).addEvent(newEvent);
+                        await FirestoreDataSource()
+                            .addCalendarEvent(newEvent.title, newEvent.day);
+                        Provider.of<CalendarProvider>(context, listen: false)
+                            .addEvent(newEvent);
 
                         _eventController.clear();
                         Navigator.of(context).pop();
@@ -173,7 +175,8 @@ class _CalendarState extends State<Calendar> {
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
                         FirestoreDataSource().deleteCalendarEvent(event.id);
-                        Provider.of<CalendarProvider>(context, listen: false).removeEvent(event);
+                        Provider.of<CalendarProvider>(context, listen: false)
+                            .removeEvent(event);
                       },
                       child: Card(
                         elevation: 3,
@@ -197,8 +200,11 @@ class _CalendarState extends State<Calendar> {
                               color: Colors.red,
                             ),
                             onPressed: () {
-                              FirestoreDataSource().deleteCalendarEvent(event.id);
-                              Provider.of<CalendarProvider>(context, listen: false).removeEvent(event);
+                              FirestoreDataSource()
+                                  .deleteCalendarEvent(event.id);
+                              Provider.of<CalendarProvider>(context,
+                                      listen: false)
+                                  .removeEvent(event);
                             },
                           ),
                         ),

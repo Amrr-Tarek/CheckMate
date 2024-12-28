@@ -1,6 +1,7 @@
+import 'package:checkmate/controllers/calendar_provider.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
-import 'package:checkmate/models/toast.dart';
+import 'package:checkmate/models/display_info.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,6 +12,19 @@ import 'package:provider/provider.dart';
 
 class AuthController {
   final FirebaseAuth _auth = FirebaseAuth.instance; // DRY
+
+  /// Checks if a user is currently logged in.
+  bool isUserLoggedIn() {
+    return _auth.currentUser != null;
+  }
+
+  Future sendPasswordReset(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw "Error sending password reset email: $e";
+    }
+  }
 
   /// Registers a new user with email and password, and stores their data in Firestore database.
   Future<void> signUp({
@@ -97,10 +111,15 @@ class AuthController {
   }
 
   /// Signs out the currently signed-in user.
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     try {
       await _auth.signOut();
       await GoogleSignIn().signOut();
+
+      context.read<UserProvider>().clearUser();
+
+      context.read<CalendarProvider>().clearProvider();
+
       showToast("Successfully signed out.", Colors.green);
     } catch (e) {
       print("Error signing out: $e");
@@ -202,6 +221,9 @@ class AuthController {
         break;
       case "user-not-found":
         message = "No user found for this email!";
+        break;
+      case "user-disabled":
+        message = "This user is disabled!";
         break;
       case "wrong-password":
         message = "Invalid password!";

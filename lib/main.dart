@@ -1,5 +1,6 @@
 import 'package:checkmate/controllers/calendar_provider.dart';
 import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/pages/reset_password.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:checkmate/pages/sign_up.dart';
@@ -40,13 +41,14 @@ class MyApp extends StatelessWidget {
         valueListenable: themeNotifier,
         builder: (_, mode, __) {
           return MaterialApp(
-            // initialRoute: '/home',
+            // initialRoute: '/',
             debugShowCheckedModeBanner: false,
             home: const LoadingScreen(),
             routes: {
               '/loading': (context) => const LoadingScreen(),
               '/signup': (context) => const SignUpPage(),
               '/login': (context) => const LoginScreen(),
+              '/reset': (context) => const ResetPassword(),
               '/home': (context) => const HomePage(),
               '/calendar': (context) => const Calendar(),
               '/routine': (context) => const RoutinePage(),

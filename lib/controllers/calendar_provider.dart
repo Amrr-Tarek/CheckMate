@@ -1,7 +1,6 @@
 import 'package:checkmate/models/calendar_model.dart';
 import 'package:flutter/material.dart';
 import 'firestore_controller.dart';
-import 'package:checkmate/models/calendar_model.dart';
 
 class CalendarProvider extends ChangeNotifier {
   List<EventModel> _events = [];
@@ -25,6 +24,11 @@ class CalendarProvider extends ChangeNotifier {
 
   void removeEvent(EventModel event) {
     _events.remove(event);
+    notifyListeners();
+  }
+
+  void clearProvider() {
+    _events = [];
     notifyListeners();
   }
 }
