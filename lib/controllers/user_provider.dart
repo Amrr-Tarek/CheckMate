@@ -12,6 +12,11 @@ class UserProvider with ChangeNotifier {
     notifyListeners(); // Notify listeners to rebuild when data changes
   }
 
+  void clearUser() {
+    _user = UserModel(name: "", email: "", xp: 0);
+    notifyListeners(); // Notify listeners to rebuild when data changes
+  }
+
   Future<void> fetchUserData(String userId) async {
     // Fetch user data from Firestore
     try {

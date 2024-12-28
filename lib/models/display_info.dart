@@ -11,3 +11,7 @@ void showToast(String message, Color backgroundColor) {
     fontSize: 16.0,
   );
 }
+
+void showSnackBar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
