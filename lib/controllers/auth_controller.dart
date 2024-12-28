@@ -1,3 +1,4 @@
+import 'package:checkmate/controllers/calendar_provider.dart';
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/display_info.dart';
@@ -116,6 +117,8 @@ class AuthController {
       await GoogleSignIn().signOut();
 
       context.read<UserProvider>().clearUser();
+
+      context.read<CalendarProvider>().clearProvider();
 
       showToast("Successfully signed out.", Colors.green);
     } catch (e) {
