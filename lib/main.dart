@@ -1,3 +1,4 @@
+import 'package:checkmate/controllers/calendar_provider.dart';
 import 'package:checkmate/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
+        // need to add the id
+        // ChangeNotifierProvider(create: (context) => CalendarProvider(eventName: "no events today", eventDate: DateTime.now())),
+        ChangeNotifierProvider(create: (_) => CalendarProvider()),
       ],
       child: ValueListenableBuilder<ThemeMode>(
         valueListenable: themeNotifier,

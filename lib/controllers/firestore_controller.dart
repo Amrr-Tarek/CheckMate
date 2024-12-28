@@ -1,4 +1,5 @@
 import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/models/calendar_model.dart';
 import 'package:checkmate/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 // ignore: depend_on_referenced_packages
 import 'package:checkmate/pages/calendar.dart';
-import 'calender_data.dart';
+// import 'calendar_provider.dart';
 
 /// This file contains the FirestoreDataSource class which is responsible for all the CRUD operations in the Firestore database.
 class EventData {
@@ -288,7 +289,62 @@ class FirestoreDataSource {
 //     return {};
 //   }
 // }
-  Future<Map<String, EventData>> getCalendarEvents() async {
+  // Future<Map<String, EventData>> getCalendarEvents() async {
+  //   try {
+  //     final querySnapshot = await _firestore
+  //         .collection('users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('calendar')
+  //         .get();
+
+  //     Map<String, EventData> eventsDB = {};
+  //     for (var doc in querySnapshot.docs) {
+  //       // CREATE EVENT OBJECT
+  //       final event = EventData(
+  //         id: doc['id'],
+  //         title: doc['event'],
+  //         day: (doc['day'] as Timestamp).toDate(),
+  //       );
+
+  //       // Use the document ID as the key
+  //       eventsDB[doc.id] = event;
+  //     }
+  //     return eventsDB;
+  //   } catch (e) {
+  //     print("Exception: $e");
+  //     return {};
+  //   }
+  // }
+
+// ==========================================================
+// the last trial to fetch the data
+  // Future<String?> getEventByNameAndDate(DateTime eventDay) async {
+  //   try {
+  //     final docSnapshot = await _firestore
+  //         .collection('users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('calendar')
+  //         // .where('event', isEqualTo: eventName)
+  //         .where('day', isEqualTo: eventDay)
+  //         .get();
+
+  //     if (docSnapshot.docs.isNotEmpty) {
+  //       if (docSnapshot.docs.isNotEmpty) {
+  //         return docSnapshot.docs[0]['event'];
+  //       } else {
+  //         print("No event found with the given criteria.");
+  //         return null;
+  //       }
+  //     } else {
+  //       print("No event found with the given criteria.");
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print("Couldn't fetch event: $e");
+  //     return null;
+  //   }
+  // }
+  Future<List<EventModel>> getEvents() async {
     try {
       final querySnapshot = await _firestore
           .collection('users')
@@ -296,25 +352,12 @@ class FirestoreDataSource {
           .collection('calendar')
           .get();
 
-      Map<String, EventData> eventsDB = {};
-      for (var doc in querySnapshot.docs) {
-        // CREATE EVENT OBJECT
-        final event = EventData(
-          id: doc['id'],
-          title: doc['event'],
-          day: (doc['day'] as Timestamp).toDate(),
-        );
-
-        // Use the document ID as the key
-        eventsDB[doc.id] = event;
-      }
-      return eventsDB;
+      return querySnapshot.docs.map((doc) => EventModel.fromFirestore(doc)).toList();
     } catch (e) {
-      print("Exception: $e");
-      return {};
+      print("Error fetching events: $e");
+      return [];
     }
   }
 
-// ==========================================================
-// Loading the data
+
 }
