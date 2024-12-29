@@ -5,6 +5,7 @@ import 'package:checkmate/controllers/goal_controller.dart';
 import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/const/messages.dart';
 import 'package:checkmate/const/colors.dart';
+import 'package:checkmate/controllers/firestore_controller.dart';
 
 class Event {
   final String title;
@@ -21,6 +22,51 @@ class Goals extends StatefulWidget {
 class _GoalsState extends State<Goals> {
   List<Map<String, dynamic>> goals = [];
   final GoalController _goalController = GoalController();
+  final FirestoreDataSource _firestoreDataSource = FirestoreDataSource();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGoals(); // Call the fetch function when the page is initialized
+  }
+
+  // Fetch the goals from Firestore and update the state
+Future<void> _fetchGoals() async {
+  try {
+    // Fetch goals from Firestore
+    List<Map<String, dynamic>> fetched_goals = await FirestoreDataSource().getAllGoals();
+
+    // Set the goals list in the state
+    setState(() {
+      goals = fetched_goals;
+    });
+  } catch (e) {
+    print("Error fetching goals: $e");
+  }
+}
+
+
+  Future<void> _updateGoal(int index) async {
+    final goal = goals[index];
+
+    // Recalculate score and check if all subtasks are completed
+    setState(() {
+      goal['score'] = _goalController.calculateGoalScore(goal);
+      goal['isChecked'] = goal['subtasks'].every((subtask) => subtask['isChecked']);
+    });
+
+    // Update Firestore
+    try {
+      await _firestoreDataSource.updateGoal(
+        goal['id'],
+        goal['subtasks'],
+        goal['isChecked'],
+        goal['score'],
+      );
+    } catch (e) {
+      print("Error updating goal in Firestore: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +77,13 @@ class _GoalsState extends State<Goals> {
     // Calculate weighted score for each goal
     for (var goal in goals) {
       double goalScore = _goalController.calculateGoalScore(goal);
-      int goalWeight =
-          goal['weight'] ?? 1; // Default weight is 1 if not provided
+      int goalWeight = goal['weight'] ?? 1; // Default weight is 1 if not provided
       totalWeightedScore += goalScore * goalWeight;
       totalWeight += goalWeight;
     }
 
     // Calculate the weighted average score
-    double averageScore =
-        totalWeight > 0 ? totalWeightedScore / totalWeight : 0.0;
+    double averageScore = totalWeight > 0 ? totalWeightedScore / totalWeight : 0.0;
 
     return Scaffold(
       appBar: appBar(context, "Goals"),
@@ -65,16 +109,21 @@ class _GoalsState extends State<Goals> {
               child: ListView.builder(
                 itemCount: goals.length,
                 itemBuilder: (context, index) {
-                  double goalScore =
-                      _goalController.calculateGoalScore(goals[index]);
+                  double goalScore = _goalController.calculateGoalScore(goals[index]);
 
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     child: GestureDetector(
                       onTap: () {
                         _goalController.showGoalDetails(
-                            context, index, goals, setState);
+                          context,
+                          index,
+                          goals,
+                          (fn) {
+                            setState(fn);
+                            _updateGoal(index);
+                          },
+                        );
                       },
                       child: Row(
                         children: [
@@ -82,13 +131,13 @@ class _GoalsState extends State<Goals> {
                             child: Row(
                               children: [
                                 CheckBoxWidget(
-                                  key: ValueKey(
-                                      goals[index]['id']), // Unique Key
+                                  key: ValueKey(goals[index]['id']), // Unique Key
                                   isChecked: goals[index]['isChecked'],
-                                  onChanged: (newState) {
+                                  onChanged: (newState) async {
                                     setState(() {
                                       goals[index]['isChecked'] = newState;
                                     });
+                                    await _updateGoal(index);
                                   },
                                 ),
                                 const SizedBox(width: 10),

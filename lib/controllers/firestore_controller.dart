@@ -83,7 +83,7 @@ class FirestoreDataSource {
     }
   }
 
-  Future<bool> addRoutine(String title, int duration) async {
+  Future<String?> addRoutine(String title, int duration) async {
     try {
       var uuid =
           Uuid().v4(); // Creates a unique id for the collection (Primary Key)
@@ -95,13 +95,72 @@ class FirestoreDataSource {
           .doc(uuid)
           .set({
         "id": uuid,
-        "title": title,
-        "duration": duration,
+        "text": title,
+        "interval": duration,
         "time": data,
-        "isDone": false,
+        "isChecked": false,
+      });
+      return uuid;
+    } catch (e) {
+      print("Exception: $e");
+      return null;
+    }
+  }
+
+  Future<bool> editRoutine({
+    required String routine_id,
+    required String title,
+    required int duration,
+  }) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("routine")
+          .doc(routine_id)
+          .update({
+        "text": title,
+        "interval": duration,
       });
       return true;
     } catch (e) {
+      print(_firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("routine")
+          .doc(routine_id)
+          .path);
+      print("Exception: $e");
+      return false;
+    }
+  }
+
+  Future<bool> CheckRoutine(
+      {required String routine_id, bool check_uncheck = true}) async {
+    try {
+      if (check_uncheck) {
+        await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("routine")
+            .doc(routine_id)
+            .update({
+          "isChecked": true,
+        });
+      } else {
+        await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("routine")
+            .doc(routine_id)
+            .update({
+          "isChecked": false,
+        });
+      }
+
+      return true;
+    } catch (e) {
+      print(routine_id);
       print("Exception: $e");
       return true;
     }
@@ -137,23 +196,6 @@ class FirestoreDataSource {
     }
   }
 
-  // // GET THE ID OF DOC
-  // Future<String> getDocId(String eventName, DateTime eventDay) async {
-  //   try {
-  //     String docId = createDocId();
-  //     final docSnapShot = await _firestore
-  //         .collection('users')
-  //         .doc(_auth.currentUser!.uid)
-  //         .collection('calendar')
-  //         .where('event', isEqualTo: eventName)
-  //         .where('day', isEqualTo: eventDay)
-  //         .get();
-  //     return docSnapShot.docs[0].id;
-  //   } catch (e) {
-  //     print("Couldn't resolve name $e");
-  //     return "FAIL";
-  //   }
-  // }
   // ------------------------------------------------------------------------
   Future<String?> getDocId(String eventName, DateTime eventDay) async {
     try {
@@ -191,115 +233,6 @@ class FirestoreDataSource {
     }
   }
 
-// ==============================================================
-// Future<void> addGoals(String eventName, DateTime eventDay) async {
-//     try {
-
-//       String docId = createDocId();
-//       await _firestore
-//           .collection('users')
-//           .doc(_auth.currentUser!.uid)
-//           .collection('calendar')
-//           .doc(docId)
-//           .set({
-//             'id': docId,
-//         'event': eventName,
-//         'day': eventDay,
-//       });
-//     } catch (e) {
-//       print("Exception: $e");
-//     }
-// }
-
-// =========================================
-
-// Future<Map<String, List<Event>>> getCalendarEvents() async {
-//   try {
-//     final querySnapshot = await _firestore
-//         .collection('users')
-//         .doc(_auth.currentUser!.uid)
-//         .collection('calendar')
-//         .get();
-
-//     Map<String, List<Event>> eventsDB = {};
-//     for (var doc in querySnapshot.docs) {
-//       // CREATE EVENT OBJECT
-//       final event = Event(
-//         id: doc['id'],
-//         title: doc['event'],
-//         day: (doc['day'] as Timestamp).toDate(),
-//       );
-//       eventsDB[doc.id] = event as List<Event>;
-//       // );
-
-//       // final key = "${event.day.year}-${event.day.month}-${event.day.day}";
-//       // if (events.containsKey(key)) {
-//       //   events[key]!.add(event);
-//       // } else {
-//       //   events[key] = [event];
-//       // }
-//     }
-//     return eventsDB;
-//   } catch (e) {
-//     print("Exception: $e");
-//     return {};
-//   }
-// }
-  // Future<Map<String, EventData>> getCalendarEvents() async {
-  //   try {
-  //     final querySnapshot = await _firestore
-  //         .collection('users')
-  //         .doc(_auth.currentUser!.uid)
-  //         .collection('calendar')
-  //         .get();
-
-  //     Map<String, EventData> eventsDB = {};
-  //     for (var doc in querySnapshot.docs) {
-  //       // CREATE EVENT OBJECT
-  //       final event = EventData(
-  //         id: doc['id'],
-  //         title: doc['event'],
-  //         day: (doc['day'] as Timestamp).toDate(),
-  //       );
-
-  //       // Use the document ID as the key
-  //       eventsDB[doc.id] = event;
-  //     }
-  //     return eventsDB;
-  //   } catch (e) {
-  //     print("Exception: $e");
-  //     return {};
-  //   }
-  // }
-
-// ==========================================================
-// the last trial to fetch the data
-  // Future<String?> getEventByNameAndDate(DateTime eventDay) async {
-  //   try {
-  //     final docSnapshot = await _firestore
-  //         .collection('users')
-  //         .doc(_auth.currentUser!.uid)
-  //         .collection('calendar')
-  //         // .where('event', isEqualTo: eventName)
-  //         .where('day', isEqualTo: eventDay)
-  //         .get();
-
-  //     if (docSnapshot.docs.isNotEmpty) {
-  //       if (docSnapshot.docs.isNotEmpty) {
-  //         return docSnapshot.docs[0]['event'];
-  //       } else {
-  //         print("No event found with the given criteria.");
-  //         return null;
-  //       }
-  //     } else {
-  //       print("No event found with the given criteria.");
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print("Couldn't fetch event: $e");
-  //     return null;
-  //   }
-  // }
   Future<List<EventModel>> getEvents() async {
     try {
       final querySnapshot = await _firestore
@@ -316,4 +249,282 @@ class FirestoreDataSource {
   }
 
 
+
+  Future<bool> removeRoutine({required String routine_id}) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("routine")
+          .doc(routine_id)
+          .delete();
+      return true;
+    } catch (e) {
+      print("Exception: $e");
+      return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAllRoutines() async {
+    try {
+      var snapshot = await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("routine")
+          .get();
+
+      List<Map<String, dynamic>> routines = [];
+      for (var doc in snapshot.docs) {
+        routines.add(doc.data());
+      }
+      return routines; // Returns a list of routine data
+    } catch (e) {
+      print("Exception: $e");
+      return []; // Returns an empty list if there's an error
+    }
+  }
+
+  Future<String?> addgoal(String title, DateTime deadline,
+      List<Map<String, dynamic>> subtasks, int weight) async {
+    try {
+      DateTime date = DateTime.now();
+      var uuid =
+          Uuid().v4(); // Creates a unique id for the collection (Primary Key)
+
+      // Create the goal document
+      await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .doc(uuid)
+          .set({
+        'id': uuid,
+        'date': date,
+        'title': title,
+        'deadline': deadline,
+        'weight': weight,
+        'isChecked': false,
+        'score': 0.00,
+      });
+
+      // Add each subtask as a separate document inside the 'subtasks' subcollection
+      for (var subtask in subtasks) {
+        var uuids =
+          Uuid().v4();
+        // Assuming each subtask is a map containing the necessary data (like 'taskName' or 'status')
+        await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("goals")
+            .doc(uuids)
+            .collection("subtasks")
+            .add(subtask); // Add each subtask as a document
+      }
+
+      return uuid;
+    } catch (e) {
+      print("Exception: $e");
+      return null;
+    }
+  }
+
+  Future<bool> editgoal(
+      String goal_id,
+      String title,
+      DateTime deadline,
+      List<Map<String, dynamic>> subtasks,
+      int weight,
+      bool isChecked,
+      double score) async {
+    try {
+      // Update goal document fields
+      await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .doc(goal_id)
+          .update({
+        'title': title,
+        'deadline': deadline,
+        'weight': weight,
+        'isChecked': isChecked,
+        'score': score,
+      });
+
+      // Update each subtask document in the subtasks subcollection
+      for (var subtask in subtasks) {
+        // Assuming each subtask has a unique ID, you may need to provide the ID for each subtask
+        var subtaskId =
+            subtask['id']; // You should have an 'id' for each subtask
+        await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("goals")
+            .doc(goal_id)
+            .collection("subtasks")
+            .doc(subtaskId) // Update the specific subtask document by its ID
+            .update(subtask);
+      }
+
+      return true;
+    } catch (e) {
+      print("Exception: $e");
+      return false;
+    }
+  }
+
+  Future<bool> updateGoal(String goal_id, List<Map<String, dynamic>> subtasks,
+      bool isChecked, double score) async {
+    try {
+      // Reference to the goal document
+      var goalDocRef = _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .doc(goal_id);
+
+      // Reference to the subtasks subcollection
+      var subtasksCollectionRef = goalDocRef.collection("subtasks");
+
+      // Delete all existing subtasks
+      var snapshot = await subtasksCollectionRef.get();
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      // Add new subtasks
+      for (var subtask in subtasks) {
+        await subtasksCollectionRef.add(subtask);
+      }
+
+      // Update the goal document with the new subtasks and other fields
+      await goalDocRef.update({
+        'subtasks': subtasks, // Update the subtasks field in the goal document
+        'isChecked': isChecked,
+        'score': score,
+      });
+
+      return true;
+    } catch (e) {
+      print("Exception: $e");
+      return false;
+    }
+  }
+
+  Future<bool> removeGoal({required String goal_id}) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .doc(goal_id)
+          .delete();
+      return true;
+    } catch (e) {
+      print("Exception: $e");
+      return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAllGoals() async {
+    try {
+      var snapshot = await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .get();
+
+      List<Map<String, dynamic>> goals = [];
+      for (var doc in snapshot.docs) {
+        var data = doc.data();
+
+        // Ensure the 'subtasks' field is treated as a List<Map<String, dynamic>> if it exists
+        if (data['subtasks'] != null && data['subtasks'] is List) {
+          // Convert subtasks into List<Map<String, dynamic>> if it's a list
+          data['subtasks'] = (data['subtasks'] as List).map((subtask) {
+            if (subtask is Map) {
+              var subtaskMap = Map<String, dynamic>.from(subtask);
+
+              // Convert the deadline to a DateTime if it's a Timestamp
+              if (subtaskMap['deadline'] is Timestamp) {
+                subtaskMap['deadline'] =
+                    (subtaskMap['deadline'] as Timestamp).toDate();
+              }
+              return subtaskMap;
+            }
+            return {}; // Return an empty map for invalid entries
+          }).toList();
+        }
+
+        // Fetch subtasks from the subcollection "subtasks" in the goal document if available
+        var subtasksSnapshot = await _firestore
+            .collection("users")
+            .doc(_auth.currentUser!.uid)
+            .collection("goals")
+            .doc(doc.id)
+            .collection("subtasks")
+            .get();
+
+        List<Map<String, dynamic>> subtasks = [];
+        for (var subtaskDoc in subtasksSnapshot.docs) {
+          var subtaskData = subtaskDoc.data();
+
+          // Convert subtask fields (e.g., deadline) if necessary
+          if (subtaskData['deadline'] is Timestamp) {
+            subtaskData['deadline'] =
+                (subtaskData['deadline'] as Timestamp).toDate();
+          }
+
+          // Add subtask to the list
+          subtasks.add(Map<String, dynamic>.from(subtaskData));
+        }
+
+        // Merge goal data with the fetched subtasks
+        data['subtasks'] = subtasks;
+
+        // Convert the deadline to DateTime if it's a Timestamp in the goal document
+        if (data['deadline'] is Timestamp) {
+          data['deadline'] = (data['deadline'] as Timestamp).toDate();
+        }
+
+        // Add the goal to the list
+        goals.add(Map<String, dynamic>.from(data));
+      }
+
+      return goals;
+    } catch (e) {
+      print("Exception: $e");
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUncheckedGoals() async {
+    try {
+      var snapshot = await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("goals")
+          .where("isChecked", isEqualTo: false)
+          .get();
+
+      List<Map<String, dynamic>> uncheckedGoals = [];
+      for (var doc in snapshot.docs) {
+        var data = doc.data();
+
+        if (data['deadline'] is Timestamp) {
+          data['deadline'] = (data['deadline'] as Timestamp).toDate();
+        }
+
+        uncheckedGoals.add({
+          "title": data["title"] ?? "",
+          "deadline": data["deadline"] ?? null,
+          "weight": data["wieght"],
+        });
+      }
+      return uncheckedGoals;
+    } catch (e) {
+      print("Exception: $e");
+      return [];
+    }
+  }
 }

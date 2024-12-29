@@ -6,6 +6,7 @@ import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/const/messages.dart';
 import 'package:checkmate/controllers/activity_controller.dart';
 import 'dart:async';
+import 'package:checkmate/controllers/firestore_controller.dart';
 
 class RoutinePage extends StatefulWidget {
   const RoutinePage({super.key});
@@ -15,23 +16,23 @@ class RoutinePage extends StatefulWidget {
 }
 
 class _RoutinePageState extends State<RoutinePage> {
-  List<Map<String, dynamic>> activities =
-      []; // List to store activities and their checked states
+  List<Map<String, dynamic>> activities = []; // List to store activities and their checked states
+  ActivityController activityController = ActivityController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadActivities();
+  }
+
+  // Load activities from Firestore
+  Future<void> _loadActivities() async {
+    activities = await FirestoreDataSource().getAllRoutines();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    ActivityController activityController = ActivityController();
-    Timer.periodic(
-      const Duration(days: 1),
-      (Timer t) {
-        List<Map<String, dynamic>> updatedActivities =
-            activityController.uncheckAllActivities(activities);
-        setState(() {
-          activities = updatedActivities;
-        });
-      },
-    );
-
     // Separate activities into checked and unchecked
     List<Map<String, dynamic>> checkedActivities =
         activities.where((activity) => activity['isChecked']).toList();
@@ -54,8 +55,8 @@ class _RoutinePageState extends State<RoutinePage> {
                   itemCount: uncheckedActivities.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       child: GestureDetector(
                         onTap: () {
                           _showTaskOptions(context, index, uncheckedActivities);
@@ -67,12 +68,28 @@ class _RoutinePageState extends State<RoutinePage> {
                                 children: [
                                   CheckBoxWidget(
                                     isChecked: uncheckedActivities[index]
-                                        ['isChecked'],
-                                    onChanged: (newState) {
+                                            ['isChecked'] ??
+                                        false, // Default to false if null
+                                    onChanged: (newState) async {
                                       setState(() {
-                                        uncheckedActivities[index]['isChecked'] =
-                                            newState;
+                                        uncheckedActivities[index]
+                                            ['isChecked'] = newState ?? false; // Ensure it's not null
                                       });
+
+                                      // Update Firestore with the new checked state
+                                      await FirestoreDataSource().CheckRoutine(
+                                        routine_id: uncheckedActivities[index]
+                                            ['id'],
+                                        check_uncheck: newState ?? false, // Ensure it's not null
+                                      );
+
+                                      // Reflect changes in the main activities list
+                                      activities[activities.indexWhere(
+                                              (activity) =>
+                                                  activity['id'] ==
+                                                  uncheckedActivities[index]
+                                                      ['id'])]
+                                          ['isChecked'] = newState ?? false;
                                     },
                                   ),
                                   const SizedBox(width: 10),
@@ -127,7 +144,7 @@ class _RoutinePageState extends State<RoutinePage> {
                   ),
                 ),
               ),
-        
+
             // ListView to display checked activities
             if (checkedActivities.isNotEmpty)
               Expanded(
@@ -135,8 +152,8 @@ class _RoutinePageState extends State<RoutinePage> {
                   itemCount: checkedActivities.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       child: GestureDetector(
                         onTap: () {
                           _showTaskOptions(context, index, checkedActivities);
@@ -148,12 +165,28 @@ class _RoutinePageState extends State<RoutinePage> {
                                 children: [
                                   CheckBoxWidget(
                                     isChecked: checkedActivities[index]
-                                        ['isChecked'],
-                                    onChanged: (newState) {
+                                            ['isChecked'] ??
+                                        false, // Default to false if null
+                                    onChanged: (newState) async {
                                       setState(() {
-                                        checkedActivities[index]['isChecked'] =
-                                            newState;
+                                        checkedActivities[index]
+                                            ['isChecked'] = newState ?? false; // Ensure it's not null
                                       });
+
+                                      // Update Firestore with the new checked state
+                                      await FirestoreDataSource().CheckRoutine(
+                                        routine_id: checkedActivities[index]
+                                            ['id'],
+                                        check_uncheck: newState ?? false, // Ensure it's not null
+                                      );
+
+                                      // Reflect changes in the main activities list
+                                      activities[activities.indexWhere(
+                                              (activity) =>
+                                                  activity['id'] ==
+                                                  checkedActivities[index]
+                                                      ['id'])]
+                                          ['isChecked'] = newState ?? false;
                                     },
                                   ),
                                   const SizedBox(width: 10),
@@ -200,10 +233,9 @@ class _RoutinePageState extends State<RoutinePage> {
     );
   }
 
-// Function to show "Edit" and "Delete" options
+  // Function to show "Edit" and "Delete" options
   void _showTaskOptions(BuildContext context, int index,
       List<Map<String, dynamic>> activityList) {
-    ActivityController activityController = ActivityController();
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -228,10 +260,11 @@ class _RoutinePageState extends State<RoutinePage> {
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
                 title: const Text('Delete'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
                   List<Map<String, dynamic>> updatedActivities =
-                      activityController.removeActivity(index, activities);
+                      await activityController.removeActivity(
+                          index, activities);
                   setState(() {
                     activities = updatedActivities;
                   });
