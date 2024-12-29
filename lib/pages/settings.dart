@@ -1,5 +1,15 @@
+import 'dart:ui';
+import 'package:checkmate/controllers/auth_controller.dart';
+import 'package:checkmate/controllers/firestore_controller.dart';
+import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/main.dart';
+import 'package:checkmate/models/display_info.dart';
+import 'package:checkmate/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/app_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -15,7 +25,16 @@ class _SettingsState extends State<Settings> {
   bool sharingAllowed = true;
 
   @override
+  void initState() {
+    super.initState();
+    isDarkMode =
+        PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    UserModel user = context.watch<UserProvider>().user;
+
     return Scaffold(
       appBar: appBar(context, "Settings"),
       body: SingleChildScrollView(
@@ -26,7 +45,7 @@ class _SettingsState extends State<Settings> {
             children: [
               __generalSection(),
               const Divider(),
-              __accountManagement(),
+              __accountManagement(user.name, user.email),
               const Divider(),
               __backup(),
               const Divider(),
@@ -54,16 +73,26 @@ class _SettingsState extends State<Settings> {
         _buildSettingTile(
           leading: Icons.feedback_outlined,
           title: "Support / Feedback",
-          onTap: () {},
+          onTap: () async {
+            await _launchUrl(Uri.parse("https://example.com"));
+          },
         ),
         _buildSettingTile(
           leading: Icons.open_in_new_sharp,
           title: "Credits",
           subtitle: "Redirect to the authors page of the application",
-          onTap: () {},
+          onTap: () async {
+            await _launchUrl(Uri.parse("https://example.com"));
+          },
         )
       ],
     );
+  }
+
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) {
+      showToast("Couldn't proceed with your request.", Colors.red);
+    }
   }
 
   Column __backup() {
@@ -102,7 +131,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Column __accountManagement() {
+  Column __accountManagement(String? name, String? email) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -113,8 +142,59 @@ class _SettingsState extends State<Settings> {
           icon: Icons.person,
           title: "Profile Information",
           children: [
-            _buildSettingTile(title: "Name", subtitle: "Your Name"),
-            _buildSettingTile(title: "E-mail", subtitle: "email@example.com"),
+            _buildSettingTile(
+                title: "Name",
+                subtitle: (name != null) ? name : "Your Name",
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    // Maybe add a 2 hours cooldown before changing the name again
+                    // Add a dialog to edit the name
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          final TextEditingController _nameController =
+                              TextEditingController();
+                          return AlertDialog(
+                            title: const Text("Edit Name"),
+                            content: TextField(
+                              controller: _nameController,
+                              decoration: const InputDecoration(
+                                labelText: "Enter your new name",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  if (_nameController.text.isNotEmpty) {
+                                    // Update the name in the database
+                                    await FirestoreDataSource().updateName(
+                                        _nameController.text.trim(), context);
+                                    showToast("Name updated successfully",
+                                        Colors.blue);
+                                    Navigator.pop(context);
+                                  } else {
+                                    showToast(
+                                        "Name cannot be empty", Colors.red);
+                                  }
+                                },
+                                child: const Text("Save"),
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                )),
+            _buildSettingTile(
+                title: "E-mail",
+                subtitle: (email != null) ? email : "email@example.com"),
             _buildSettingTile(title: "Logo"),
           ],
         ),
@@ -122,11 +202,13 @@ class _SettingsState extends State<Settings> {
             icon: Icons.sync, title: "Sync Options", children: []),
         _buildExpansionTile(
           icon: Icons.security,
-          title: "Security and Privcy",
+          title: "Security and Privacy",
           children: [
             _buildSettingTile(
-                title:
-                    "Change your Password"), // Maybe Redirect to another page
+                title: "Reset your Password",
+                onTap: () {
+                  Navigator.of(context).pushNamed("/reset");
+                }), // Maybe Redirect to another page
             _buildSettingTile(
               title: "Allow data sharing",
               subtitle:
@@ -146,14 +228,93 @@ class _SettingsState extends State<Settings> {
           title: "Sign out",
           subtitle: "Log out from your account",
           // Log out from the session and redirect to the Home page
-          onTap: () {},
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Sign Out"),
+                  content: const Text("Are you sure you want to sign out?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        await AuthController().signOut(context);
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          "/login",
+                          (Route<dynamic> route) =>
+                              false, // Removes all routes in the stack
+                        );
+                      },
+                      child: const Text("Sign Out"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
         _buildSettingTile(
           leading: Icons.delete_forever_outlined,
           title: "Delete Account Forever",
-          subtitle: "This action is irreversable!",
-          // Displays a pop up with a confirmation with an acknowledgment that the user understands the action cannot be undone
-          onTap: () {},
+          subtitle: "This action is irreversible!",
+          onTap: () async {
+            final User? user = FirebaseAuth.instance.currentUser;
+            if (user == null) {
+              showToast("No user is signed in!", Colors.red);
+              return;
+            }
+
+            final List<UserInfo> providerData = user.providerData;
+            final bool isEmailUser =
+                providerData.any((info) => info.providerId == "password");
+            final bool isGoogleUser =
+                providerData.any((info) => info.providerId == "google.com");
+            final bool isGithubUser =
+                providerData.any((info) => info.providerId == "github.com");
+
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Delete Account"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                          "Are you sure you want to delete your account? This action is irreversible!"),
+                      const SizedBox(height: 10),
+                      if (isGoogleUser || isGithubUser)
+                        const Text(
+                            "You will be asked to reauthenticate with your provider."),
+                      if (isEmailUser)
+                        const Text(
+                            "You will be asked to enter your password to proceed."),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        await AuthController().deleteAccount(context: context);
+                      },
+                      child: const Text("Delete"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ],
     );
@@ -170,12 +331,19 @@ class _SettingsState extends State<Settings> {
           leading: Icons.color_lens_outlined,
           title: "App Theme",
           subtitle: "Light/Dark mode",
-          trailing: Switch(
-            value: isDarkMode,
-            onChanged: (value) {
-              setState(
-                () {
-                  isDarkMode = value;
+          trailing: ValueListenableBuilder(
+            valueListenable: themeNotifier,
+            builder: (_, mode, __) {
+              return Switch(
+                value: isDarkMode,
+                onChanged: (value) {
+                  setState(
+                    () {
+                      isDarkMode = value;
+                    },
+                  );
+                  themeNotifier.value =
+                      value ? ThemeMode.dark : ThemeMode.light;
                 },
               );
             },
@@ -227,7 +395,12 @@ class _SettingsState extends State<Settings> {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      leading: leading != null ? Icon(leading, size: 30) : null,
+      leading: leading != null
+          ? Icon(leading,
+              size: 30,
+              color:
+                  leading == Icons.delete_forever_outlined ? Colors.red : null)
+          : null,
       title: Text(
         title,
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),

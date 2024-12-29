@@ -42,5 +42,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.vscode
+.vscode/
 firebase-tools-instant-win.exe

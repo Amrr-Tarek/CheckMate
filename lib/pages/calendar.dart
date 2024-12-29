@@ -1,8 +1,11 @@
+import 'package:checkmate/controllers/firestore_controller.dart';
+import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/models/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:checkmate/pages/goals.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:checkmate/models/app_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:checkmate/controllers/calendar_provider.dart';
+import 'package:checkmate/models/calendar_model.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -12,17 +15,21 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  // Attributes for calendar
+  // Atributes for the calendar
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
-
-  // To store the goals and their dates
-  Map<DateTime, List<Event>> goals = {};
   TextEditingController _eventController = TextEditingController();
 
-  // Method to get events for a specific day
-  List<Event> _getEventsForDay(DateTime day) {
-    return goals[day] ?? [];
+  @override
+  void initState() {
+    super.initState();
+    // this will make the app to fetch the events from the database and still exist locally while the navigation among the pages
+    // Fetch event data when the widget is initialized
+    Provider.of<CalendarProvider>(context, listen: false).fetchEvents();
+  }
+
+  List<EventModel> _getEventsForDay(DateTime day, List<EventModel> events) {
+    return events.where((event) => isSameDay(event.day, day)).toList();
   }
 
   @override
@@ -30,11 +37,17 @@ class _CalendarState extends State<Calendar> {
     return Scaffold(
       appBar: appBar(context, "Calendar"),
       drawer: MyDrawer.createDrawer(context, "calendar"),
-      body: content(),
+      // ========================================
+      body: Consumer<CalendarProvider>(
+        builder: (context, provider, child) {
+          final events = provider.events;
+          return content(events);
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
-            context: context, 
+            context: context,
             builder: (context) {
               return AlertDialog(
                 title: const Text(
@@ -58,32 +71,29 @@ class _CalendarState extends State<Calendar> {
                     onPressed: () {
                       Navigator.of(context).pop();
                       _eventController.clear();
-                    }, 
+                    },
                     child: const Text(
                       "Cancel",
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      if(_eventController.text.isNotEmpty) {
-                        setState(() {
-                          // Create a new event object
-                          Event newEvent = Event(title: _eventController.text);
-                          
-                          // Add event to the selected day
-                          if (goals.containsKey(_selectedDay)) {
-                            goals[_selectedDay]!.add(newEvent);
-                          } else {
-                            goals[_selectedDay] = [newEvent];
-                          }
-                        });
-                        
-                        // Clear the event controller and close dialog
+                    onPressed: () async {
+                      if (_eventController.text.isNotEmpty) {
+                        final newEvent = EventModel(
+                          id: '', // Generate or fetch a unique ID
+                          title: _eventController.text,
+                          day: _selectedDay,
+                        );
+                        await FirestoreDataSource()
+                            .addCalendarEvent(newEvent.title, newEvent.day);
+                        Provider.of<CalendarProvider>(context, listen: false)
+                            .addEvent(newEvent);
+
                         _eventController.clear();
                         Navigator.of(context).pop();
                       }
-                    }, 
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
                     ),
@@ -91,7 +101,7 @@ class _CalendarState extends State<Calendar> {
                   ),
                 ],
               );
-            }
+            },
           );
         },
         backgroundColor: Colors.orange,
@@ -100,7 +110,7 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  Widget content() {
+  Widget content(List<EventModel> events) {
     return Column(
       children: [
         Padding(
@@ -129,8 +139,7 @@ class _CalendarState extends State<Calendar> {
               _focusedDay = focusedDay;
             });
           },
-          // the following are methods to 
-          eventLoader: _getEventsForDay,
+          eventLoader: (day) => _getEventsForDay(day, events),
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
               color: Colors.blue.shade300,
@@ -147,70 +156,71 @@ class _CalendarState extends State<Calendar> {
           ),
         ),
         Expanded(
-          child: goals[_selectedDay] != null && goals[_selectedDay]!.isNotEmpty
-            ? ListView.builder(
-                itemCount: goals[_selectedDay]?.length ?? 0,
-                itemBuilder: (context, index) {
-                  final event = goals[_selectedDay]![index];
-                  return Dismissible(
-                    key: Key(event.title),
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 20),
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                    ),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      setState(() {
-                        goals[_selectedDay]?.removeAt(index);
-                      });
-                    },
-                    child: Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          event.title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              goals[_selectedDay]?.removeAt(index);
-                            });
-                          },
+          child: _getEventsForDay(_selectedDay, events).isNotEmpty
+              ? ListView.builder(
+                  itemCount: _getEventsForDay(_selectedDay, events).length,
+                  itemBuilder: (context, index) {
+                    final event = _getEventsForDay(_selectedDay, events)[index];
+                    return Dismissible(
+                      key: Key(event.id),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
                         ),
                       ),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        FirestoreDataSource().deleteCalendarEvent(event.id);
+                        Provider.of<CalendarProvider>(context, listen: false)
+                            .removeEvent(event);
+                      },
+                      child: Card(
+                        elevation: 3,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            event.title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              FirestoreDataSource()
+                                  .deleteCalendarEvent(event.id);
+                              Provider.of<CalendarProvider>(context,
+                                      listen: false)
+                                  .removeEvent(event);
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : Center(
+                  child: Text(
+                    'No events for this day',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 16,
                     ),
-                  );
-                },
-              )
-              // handling non events
-            : Center(
-                child: Text(
-                  'No events for this day',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 16,
                   ),
                 ),
-              ),
         ),
       ],
     );

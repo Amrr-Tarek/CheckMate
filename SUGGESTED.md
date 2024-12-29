@@ -27,8 +27,16 @@
 
 - [ ] Add hints to each button
 
+- [ ] Swipe down to reload dashboard
+
+- [ ] Some validations in sign up
+	- [ ] Name must be between 3 and 20 letters
+	- [ ] Confirm password logic
+
+- [ ] Currently the app doesn't allow multiple account instances with the same email.. Solve the problem by adding linked accounts feature
+
 After we finish:
 
 - [ ] Making the app theme convenient with the idea
 
-- [ ] Add dark mode
+- [x] Add dark mode

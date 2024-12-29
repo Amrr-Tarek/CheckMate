@@ -1,4 +1,5 @@
 import 'package:checkmate/models/navigator.dart';
+import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -10,6 +11,9 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
+  final TextEditingController _nameController= TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,7 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             children: <Widget>[
               TextFormField(
+                controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -33,6 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               TextFormField(
+                controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -42,11 +48,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               TextFormField(
+                controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
@@ -64,8 +71,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Confirm Password'),
-                obscureText: true,
+                decoration:
+                    const InputDecoration(labelText: 'Confirm Password'),
+                obscureText: _obscureText,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please confirm your password';
@@ -75,13 +83,19 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Mock sign-up success logic
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sign-up successful!')),
-                    );
-                  }
+                onPressed: () async {
+                  // if (_formKey.currentState!.validate()) {
+                  //   // Mock sign-up success logic
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(content: Text('Sign-up successful!')),
+                  //   );
+                  // }
+                  await AuthController().signUp(
+                    name: _nameController.text,
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                    context: context,
+                  );
                 },
                 child: const Text('Sign Up'),
               ),
