@@ -32,10 +32,10 @@ CheckMate is a powerful and intuitive to-do application built using Flutter. It 
   <img src="Images/log_in.jpg" alt="Screenshot 2" width="45%">
 </div>
 
-<div style="display: flex; gap: 10px; margin-top: 10px;">
+<!--<div style="display: flex; gap: 10px; margin-top: 10px;">
   <img src="Images/settings.jpg" alt="Screenshot 3" width="45%">
   <img src="Images/sign_up.jpg" alt="Screenshot 4" width="45%">
-</div>
+</div>-->
 
 ## Getting Started
 
