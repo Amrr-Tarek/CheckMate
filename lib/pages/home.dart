@@ -1,5 +1,3 @@
-import 'package:checkmate/controllers/firestore_controller.dart';
-import 'package:checkmate/controllers/goal_controller.dart';
 import 'package:checkmate/controllers/auth_controller.dart';
 import 'package:checkmate/controllers/user_provider.dart';
 import 'package:checkmate/models/buttons.dart';
@@ -11,10 +9,8 @@ import 'package:checkmate/data/Line_chart_data.dart';
 import 'package:checkmate/const/colors.dart';
 import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/models/drawer.dart';
-import 'package:checkmate/const/messages.dart';
 import 'package:checkmate/models/tasks_home.dart';
 import 'package:provider/provider.dart';
-
 
 class HomePage extends StatefulWidget {
   final String title = "Home";
@@ -26,9 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, dynamic>> goals = [];
-  bool isLoading = true;
-
   int _currentIndex = 0;
 
   List<TaskModel> tasks = [];
@@ -39,56 +32,56 @@ class _HomePageState extends State<HomePage> {
     fetchData();
   }
 
-  void fetchData() async {
-    try {
-      // Fetch goals data
-      List<Map<String, dynamic>> fetchedGoals = await FirestoreDataSource().getUncheckedGoals();
-      setState(() {
-        goals = fetchedGoals;
-        isLoading = false;
-      });
-    } catch (e) {
-      // Handle any errors here if needed
-      setState(() {
-        isLoading = false;
-      });
-    }
+  void fetchData() {
+    tasks = TaskModel.getTasks();
   }
 
   // Is ran everytime setState is called
   @override
   Widget build(BuildContext context) {
+    UserModel user = context.watch<UserProvider>().user;
+
+    fetchData();
+    // create an instance of LineDate that contains random data
+    final data = LineData();
     return Scaffold(
       appBar: appBar(context, "Dashboard", showIcon: true),
       drawer: MyDrawer.createDrawer(context, "dashboard"),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  _nameXP(),
-                  _graph(),
-                  SizedBox(height: 10),
-                  _goals(),
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _nameXP(user.name, user.xp),
+            _graph(data),
+            SizedBox(height: 20),
+            _tasks(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Button(
+                label: "Check if user is logged in",
+                onPressed: () async {
+                  // don't use auth controller here
+                  bool isLoggedIn = await AuthController().isUserLoggedIn();
+                  if (isLoggedIn) {
+                    showSnackBar(context, "User is logged in");
+                  } else {
+                    showSnackBar(context, "No user is logged in");
+                  }
+                },
+                backgroundColor: AppColors.boxColor,
+                textColor: AppColors.backgroundColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                borderRadius: 24.0,
+                height: 48.0,
               ),
             ),
+          ],
+        ),
+      ),
       // bottomNavigationBar: myBottomNavBar(),
     );
   }
 
-Column _goals() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(
-          "My Goals",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textColor,
   BottomNavigationBar myBottomNavBar() {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
@@ -127,89 +120,52 @@ Column _goals() {
             _currentIndex == 3 ? Icons.person : Icons.person_outlined,
             color: Colors.black,
           ),
+          label: 'Profile',
         ),
-      ),
-      goals.isEmpty
-          ? Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.check_circle_outline,
-                    size: 80,
-                    color: Colors.grey[400],
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "All caught up!",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textColor,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    Messages.NoUnCheckedGoals,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : ListView.separated(
-              itemCount: goals.length,
-              separatorBuilder: (context, index) => SizedBox(height: 10),
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final goal = goals[index];
-                final title = goal['title'] ?? "Untitled";
-                final deadline = goal['deadline'] != null
-                    ? (goal['deadline'] as DateTime).toLocal()
-                    : null;
-                final weight = goal['weight'] ?? 1; // Default to 1 if weight is not available
-                final weightLabel = GoalController().getWeightLabel(weight);
+      ],
+    );
+  }
 
-                return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: AppColors.textColor, width: 1),
-                  ),
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        if (deadline != null)
-                          Text(
-                            "Deadline: ${deadline.toString().split(' ')[0]}",
-                            style: TextStyle(fontSize: 14, color: AppColors.textColor),
-                          ),
-                        Text(
-                          "Weight: $weightLabel",
-                          style: TextStyle(fontSize: 14, color: AppColors.textColor),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+  Column _tasks() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            "My Tasks",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).secondaryHeaderColor,
             ),
-    ],
-  );
-}
+          ),
+        ),
+        ListView.separated(
+          itemCount: tasks.length,
+          separatorBuilder: (context, index) => SizedBox(height: 10),
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) => Card(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: AppColors.borderColor, width: 1),
+            ),
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                tasks[index].taskName,
+                style: TextStyle(fontSize: 18, color: tasks[index].color),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Container _graph(LineData data) {
     return Container(

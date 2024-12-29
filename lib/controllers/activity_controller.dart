@@ -76,7 +76,7 @@ class ActivityController {
                   child: const Text(Messages.cancelButtonText),
                 ),
                 TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     final description = activityTextController.text;
                     final interval = activityIntervalController.text;
                     final intervalValue = int.tryParse(interval);
@@ -94,22 +94,13 @@ class ActivityController {
                         errorMessage = wordLimitMessage;
                       });
                     } else {
-                      // Add routine to Firestore
-                      String? routineId = await FirestoreDataSource().addRoutine(description, intervalValue);
-
-                      if (routineId != null) {
-                        activities.add({
-                          'id': routineId,  // Add the new routine ID
-                          'text': description,
-                          'interval': intervalValue,
-                          'isChecked': false,
-                        });
-                        Navigator.of(context).pop();
-                      } else {
-                        setState(() {
-                          errorMessage = "Failed to add activity to Firestore.";
-                        });
-                      }
+                      FirestoreDataSource().addRoutine(description, intervalValue);
+                      activities.add({
+                        'text': description,
+                        'interval': intervalValue,
+                        'isChecked': false,
+                      });
+                      Navigator.of(context).pop();
                     }
                   },
                   child: const Text(Messages.addButtonText),
@@ -132,7 +123,6 @@ class ActivityController {
     final TextEditingController activityTextController = TextEditingController(text: activities[index]['text']);
     final TextEditingController activityIntervalController = TextEditingController(text: activities[index]['interval'].toString());
     String? wordLimitMessage;
-    String? errorMessage;
 
     await showDialog(
       context: context,
@@ -179,7 +169,7 @@ class ActivityController {
                   child: const Text(Messages.cancelButtonText),
                 ),
                 TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     final description = activityTextController.text;
                     final interval = activityIntervalController.text;
                     final intervalValue = int.tryParse(interval);
@@ -189,22 +179,9 @@ class ActivityController {
                     } else if (wordLimitMessage != null) {
                       return;
                     } else {
-                      // Edit routine in Firestore
-                      bool success = await FirestoreDataSource().editRoutine(
-                        routine_id: activities[index]['id'],
-                        title: description,
-                        duration: intervalValue,
-                      );
-
-                      if (success) {
-                        activities[index]['text'] = description;
-                        activities[index]['interval'] = intervalValue;
-                        Navigator.of(context).pop();
-                      } else {
-                        setState(() {
-                          errorMessage = "Failed to update activity in Firestore.";
-                        });
-                      }
+                      activities[index]['text'] = description;
+                      activities[index]['interval'] = intervalValue;
+                      Navigator.of(context).pop();
                     }
                   },
                   child: const Text(Messages.saveButtonText),
@@ -219,20 +196,8 @@ class ActivityController {
   }
 
   // Function to remove an activity
-  Future<List<Map<String, dynamic>>> removeActivity(
-    int index,
-    List<Map<String, dynamic>> activities,
-  ) async {
-    // Remove routine from Firestore
-    bool success = await FirestoreDataSource().removeRoutine(routine_id: activities[index]['id']);
-
-    if (success) {
-      activities.removeAt(index);  // Remove activity from local list
-    } else {
-      // Handle error case here if necessary
-      print("Failed to remove activity from Firestore.");
-    }
-
+  List<Map<String, dynamic>> removeActivity(int index, List<Map<String, dynamic>> activities) {
+    activities.removeAt(index);
     return activities;
   }
 
