@@ -98,7 +98,7 @@ Future<void> _fetchGoals() async {
               'Total Score: ${averageScore.toStringAsFixed(2)}%',
               style: const TextStyle(
                 fontSize: 24,
-                color: AppColors.textColor,
+                // color: AppColors.textColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -147,7 +147,7 @@ Future<void> _fetchGoals() async {
                                     Text(
                                       goals[index]['title'],
                                       style: const TextStyle(
-                                        color: AppColors.textColor,
+                                        // color: AppColors.textColor,
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
                                       ),

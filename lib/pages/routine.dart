@@ -96,7 +96,7 @@ class _RoutinePageState extends State<RoutinePage> {
                                   Text(
                                     uncheckedActivities[index]['text'],
                                     style: const TextStyle(
-                                      color: AppColors.textColor,
+                                      // color: AppColors.textColor,
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -127,7 +127,7 @@ class _RoutinePageState extends State<RoutinePage> {
                   Messages.finish,
                   style: TextStyle(
                     fontSize: 32,
-                    color: AppColors.textColor,
+                    // color: AppColors.textColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -193,7 +193,7 @@ class _RoutinePageState extends State<RoutinePage> {
                                   Text(
                                     checkedActivities[index]['text'],
                                     style: const TextStyle(
-                                      color: AppColors.textColor,
+                                      // color: AppColors.textColor,
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
                                     ),

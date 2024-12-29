@@ -87,7 +87,7 @@ Column _goals() {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: AppColors.textColor,
+            // color: AppColors.textColor,
           ),
         ),
       ),
@@ -107,7 +107,7 @@ Column _goals() {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textColor,
+                      // color: AppColors.textColor,
                     ),
                   ),
                   SizedBox(height: 5),
@@ -142,7 +142,7 @@ Column _goals() {
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: AppColors.textColor, width: 1),
+                    side: BorderSide(width: 1),
                   ),
                   elevation: 5,
                   child: Padding(
@@ -157,11 +157,11 @@ Column _goals() {
                         if (deadline != null)
                           Text(
                             "Deadline: ${deadline.toString().split(' ')[0]}",
-                            style: TextStyle(fontSize: 14, color: AppColors.textColor),
+                            style: TextStyle(fontSize: 14),
                           ),
                         Text(
                           "Weight: $weightLabel",
-                          style: TextStyle(fontSize: 14, color: AppColors.textColor),
+                          style: TextStyle(fontSize: 14),
                         ),
                       ],
                     ),
