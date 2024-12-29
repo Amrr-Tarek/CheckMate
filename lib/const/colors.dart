@@ -7,4 +7,7 @@ class AppColors {
   static const Color smallText = Color(0xFF647487);
   static const Color hyperlink = Color(0xFF3889E5);
   static const Color barColor = Color(0xFFB9A3F4);
+
+  static const Color primaryColor = Color(0xFF5C6BC0);
+  static const Color borderColor = Color(0xFFE0E0E0);
 }

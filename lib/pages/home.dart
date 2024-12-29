@@ -1,11 +1,21 @@
 import 'package:checkmate/controllers/firestore_controller.dart';
 import 'package:checkmate/controllers/goal_controller.dart';
+import 'package:checkmate/controllers/auth_controller.dart';
+import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/models/buttons.dart';
+import 'package:checkmate/models/display_info.dart';
+import 'package:checkmate/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:checkmate/data/Line_chart_data.dart';
 import 'package:checkmate/const/colors.dart';
-// import 'package:checkmate/models/buttons.dart';
 import 'package:checkmate/models/app_bar.dart';
 import 'package:checkmate/models/drawer.dart';
 import 'package:checkmate/const/messages.dart';
+import 'package:checkmate/models/tasks_home.dart';
+import 'package:provider/provider.dart';
+
+
 class HomePage extends StatefulWidget {
   final String title = "Home";
 
@@ -18,6 +28,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> goals = [];
   bool isLoading = true;
+
+  int _currentIndex = 0;
+
+  List<TaskModel> tasks = [];
 
   @override
   void initState() {
@@ -41,6 +55,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Is ran everytime setState is called
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +73,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-      // Uncomment and implement the bottomNavigationBar if needed
       // bottomNavigationBar: myBottomNavBar(),
     );
   }
@@ -75,6 +89,43 @@ Column _goals() {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: AppColors.textColor,
+  BottomNavigationBar myBottomNavBar() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      fixedColor: Colors.black,
+      backgroundColor: Theme.of(context).primaryColor,
+      currentIndex: _currentIndex,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(
+            _currentIndex == 0 ? Icons.home : Icons.home_outlined,
+            color: Colors.black,
+          ),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            _currentIndex == 1 ? Icons.repeat_on : Icons.repeat_outlined,
+            color: Colors.black,
+          ),
+          label: 'Routine',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            _currentIndex == 2 ? Icons.album : Icons.album_outlined,
+            color: Colors.black,
+          ),
+          label: 'Goals',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            _currentIndex == 3 ? Icons.person : Icons.person_outlined,
+            color: Colors.black,
           ),
         ),
       ),
@@ -160,59 +211,179 @@ Column _goals() {
   );
 }
 
-  Container _graph() {
+  Container _graph(LineData data) {
     return Container(
-      color: Colors.red,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       height: 200,
-      child: Center(
-        child: Text(
-          "Visual Graph here",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 30,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
-        ),
+        ],
       ),
+      child: data.spots.isEmpty // Check if the data is empty
+          ? Center(
+              child: Text(
+                "Visual Graph here",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
+              ),
+            )
+          : Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Your Progress',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  AspectRatio(
+                    aspectRatio: 16 / 6,
+                    child: LineChart(
+                      LineChartData(
+                        backgroundColor:
+                            const Color(0xFFF0F0F0), // Light grey background
+                        lineTouchData: LineTouchData(
+                          handleBuiltInTouches: true,
+                        ),
+                        gridData: FlGridData(
+                          show: false,
+                        ),
+                        titlesData: FlTitlesData(
+                          rightTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                          // Left titles of the graph
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                return data.leftTitle[value.toInt()] != null
+                                    ? Text(
+                                        data.leftTitle[value.toInt()]
+                                            .toString(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              },
+                              interval: 1,
+                              reservedSize: 24,
+                            ),
+                          ),
+                          // Bottom titles of the graph
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                return data.bottomTitle[value.toInt()] != null
+                                    ? Text(
+                                        data.bottomTitle[value.toInt()]
+                                            .toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              },
+                              interval: 1,
+                              reservedSize: 24,
+                            ),
+                          ),
+                        ),
+                        borderData: FlBorderData(
+                          show: true,
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 37, 34, 97),
+                            width: 1,
+                          ),
+                        ),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: data.spots,
+                            dotData: FlDotData(show: false),
+                            show: true,
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.blue, Colors.purple],
+                            ),
+                            color: const Color.fromARGB(255, 24, 121, 102),
+                            belowBarData: BarAreaData(show: false),
+                          ),
+                        ],
+                        minX: 0,
+                        maxX: 120,
+                        minY: 0,
+                        maxY: 100,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
-  Container _nameXP() {
+  Container _nameXP(String name, int xp) {
     return Container(
-      height: 80,
-      color: Colors.amber,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          FutureBuilder<String>(
-            future: FirestoreDataSource().getName(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (snapshot.hasData && snapshot.data != "FAIL") {
-                return Text(
-                  snapshot.data!,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                );
-              } else {
-                return const Text('Failed to load name');
-              }
-            },
-          ),
-          Text(
-            "00XP",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+      height: 100,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor.withOpacity(0.8),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
-          )
-        ],
+            Text(
+              "$xp XP",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

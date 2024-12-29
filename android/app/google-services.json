@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "32005702382-alm9ipkul24pcovq20bnjk18li40q69m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.checkmate",
+            "certificate_hash": "c6e0fef1ea03428a8aa0617b092791fb67c37619"
+          }
+        },
+        {
           "client_id": "32005702382-lrpiklbllbm1nj6hce77t6n1pv0grfsj.apps.googleusercontent.com",
           "client_type": 3
         }

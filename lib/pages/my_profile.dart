@@ -1,5 +1,8 @@
+import 'package:checkmate/controllers/user_provider.dart';
+import 'package:checkmate/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:checkmate/models/app_bar.dart';
+import 'package:provider/provider.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -11,6 +14,8 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
+    UserModel user = context.watch<UserProvider>().user;
+
     return Scaffold(
       // Page Front End - Everything down here is unnecessary
       appBar: appBar(context, "My Profile"),
@@ -18,10 +23,10 @@ class _MyProfileState extends State<MyProfile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            __nameLogo(),
+            __nameLogo(user.name, user.xp),
             const SizedBox(height: 10),
             const Divider(),
-            __emailSection(),
+            __emailSection(user.email),
             const Divider(),
             __insightsSection(),
           ],
@@ -60,7 +65,7 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Padding __emailSection() {
+  Padding __emailSection(String email) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
       child: Column(
@@ -72,7 +77,7 @@ class _MyProfileState extends State<MyProfile> {
           ),
           SizedBox(height: 8),
           Text(
-            "email@example.com",
+            email,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           SizedBox(height: 8),
@@ -81,10 +86,9 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Container __nameLogo() {
+  Container __nameLogo(String name, int xp) {
     return Container(
       padding: const EdgeInsets.all(20),
-      color: Colors.amber,
       height: 140,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,12 +99,12 @@ class _MyProfileState extends State<MyProfile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Your Name",
+                  name,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "00 XP",
+                  "$xp XP",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 )
               ],
@@ -140,7 +144,7 @@ class _InsightCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 5),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
