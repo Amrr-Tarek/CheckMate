@@ -1,7 +1,5 @@
 # CheckMate - A Flutter To-Do Application
 
-<!-- ![CheckMate Logo](assets/app_icon.png) Add your logo image here -->
-
 ## Overview
 
 CheckMate is a powerful and intuitive to-do application built using Flutter. It helps users efficiently manage tasks, events, meetings, and daily routines. The app provides feedback on your progress towards achieving your goals, allowing you to define the importance of each task (low, medium, hard) and set deadlines. Your progress is calculated based on these parameters, and you earn points or strikes, which are visualized in a graph to represent your progress over the year.
@@ -15,7 +13,8 @@ CheckMate is a powerful and intuitive to-do application built using Flutter. It 
 - **Progress Dashboard**: Monitor your progress with a comprehensive dashboard.
 - **Points System**: Earn points for completing tasks and achieving goals.
 - **Progress Visualization**: Visualize your achievements with interactive charts.
-- **Secure Account System**: Register, login, and manage your account securely with Firebase.
+- **Secure Account System** with Firebase:
+  - **Regist** and **Login** with your account securly.
 - **Multiple Authentication Providers**:
   - **Google Sign-In**
   - **GitHub Sign-In**
